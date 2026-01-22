@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Family Trip 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
+        
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8f7f2; color: #333; overflow-x: hidden; }
+        .font-black { font-weight: 900; }
+        
+        /* 線性時間軸 */
+        .timeline-line::before { content: ''; position: absolute; left: 24px; top: 0; bottom: 0; width: 2px; background-color: #e2e0d5; z-index: 0; }
+        .timeline-time { font-size: 1.4rem; font-weight: 900; color: #5c4a31; background: #f8f7f2; padding-right: 8px; position: relative; z-index: 10; letter-spacing: -0.05em; }
+        .timeline-dot { position: absolute; left: -32px; top: 12px; width: 16px; height: 16px; background: #5c4a31; border-radius: 50%; border: 4px solid white; box-shadow: 0 0 0 1px #e2e0d5; z-index: 20; }
+        
+        /* UI 卡片 */
+        .glass-card { background: white; border-radius: 18px; border: 1px solid #efeee9; box-shadow: 0 4px 20px rgba(0,0,0,0.03); transition: all 0.2s; position: relative; }
+        .glass-card:active { transform: scale(0.98); background: #fafafa; }
+        .day-btn.active { background: #5c4a31 !important; color: white !important; transform: scale(1.05); font-weight: 900; }
+        
+        /* 交通卡片特殊樣式 */
+        .transport-card { background: #f0f4f8; border-left: 4px solid #3b82f6; }
+
+        /* 彈出視窗：中央置中 */
+        #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(44, 41, 35, 0.6); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: all 0.3s ease; }
+        #modal-overlay.active { opacity: 1; pointer-events: auto; }
+        #modal-card { width: 92%; max-width: 420px; background: white; border-radius: 28px; overflow: hidden; transform: translateY(30px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        #modal-overlay.active #modal-card { transform: translateY(0); }
+
+        /* 按鈕風格 */
+        .btn-action { padding: 14px; border-radius: 50px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; width: 100%; margin-bottom: 8px; }
+        .btn-map { background: #5c4a31; color: white; }
+        .btn-web { background: #f0ede4; color: #5c4a31; }
+        .btn-vjw { background: #1a1a1a; color: white; }
+        .btn-call { background: #ef4444; color: white; }
+        
+        .qr-placeholder { background: #1a1a1a; width: 140px; height: 140px; margin: 15px auto; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 900; letter-spacing: 2px; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="pb-28">
+
+    <!-- 頂部標題 -->
+    <header class="p-8 bg-white border-b border-stone-100 text-center">
+        <p class="text-[10px] text-stone-400 font-black tracking-[0.3em] uppercase">Kyoto & Nagoya</p>
+        <h1 class="text-3xl font-black text-[#5c4a31]">Family Trip 2026</h1>
+    </header>
+
+    <!-- 日期導航 -->
+    <nav class="flex overflow-x-auto no-scrollbar p-4 space-x-2 bg-[#f8f7f2]/95 backdrop-blur sticky top-0 z-40">
+        <button onclick="showDay(1, this)" class="day-btn active px-6 py-2.5 rounded-full text-xs font-black bg-white border border-stone-200 shadow-sm">2/14</button>
+        <button onclick="showDay(2, this)" class="day-btn px-6 py-2.5 rounded-full text-xs font-bold bg-white border border-stone-200">2/15</button>
+        <button onclick="showDay(3, this)" class="day-btn px-6 py-2.5 rounded-full text-xs font-bold bg-white border border-stone-200">2/16</button>
+        <button onclick="showDay(4, this)" class="day-btn px-6 py-2.5 rounded-full text-xs font-bold bg-white border border-stone-200">2/17</button>
+        <button onclick="showDay(5, this)" class="day-btn px-6 py-2.5 rounded-full text-xs font-bold bg-white border border-stone-200">2/18</button>
+        <button onclick="showDay(6, this)" class="day-btn px-6 py-2.5 rounded-full text-xs font-bold bg-white border border-stone-200">2/19</button>
+        <button onclick="showDay(7, this)" class="day-btn px-6 py-2.5 rounded-full text-xs font-bold bg-white border border-stone-200">2/20</button>
+    </nav>
+
+    <!-- 行程主內容 -->
+    <main class="px-7 py-4 relative timeline-line">
+
+        <!-- Day 1: 抵達京都 -->
+        <div id="day1" class="day-section space-y-10">
+            <div class="relative z-10 ml-8" onclick="openModal('it210')">
+                <div class="timeline-dot"></div>
+                <p class="timeline-time">07:00</p>
+                <div class="glass-card p-5 bg-stone-800 text-white flex justify-between items-center">
+                    <div>
+                        <span class="text-[9px] bg-orange-500 px-2 py-0.5 rounded font-black mb-1.5 inline-block uppercase">Flight IT210</span>
+                        <h3 class="font-black text-base">桃園 TPE → 關西 KIX</h3>
+                        <p class="text-[10px] text-orange-300 mt-1 font-bold">10:25 抵達 · 建議 04:30 報到</p>
+                    </div>
+                    <i class="fas fa-qrcode text-xl opacity-60"></i>
+                </div>
+            </div>
+            <div class="relative z-10 ml-8" onclick="openModal('haruka_kix')">
+                <div class="timeline-dot bg-blue-400"></div>
+                <p class="timeline-time">11:44</p>
+                <div class="glass-card p-5 transport-card shadow-sm">
+                    <h3 class="font-black text-sm">關空特急 Haruka (乘車 80min)</h3>
+                    <p class="text-xs text-blue-600 mt-1">關西機場 → 京都車站 (13:04 抵達)</p>
+                </div>
+            </div>
+            <div class="relative z-10 ml-8" onclick="openModal('kyoto_hotel')">
+                <div class="timeline-dot bg-blue-500"></div>
+                <p class="timeline-time">13:10</p>
+                <div class="glass-card p-5 border-l-4 border-blue-500 flex justify-between items-center">
+                    <div><h3 class="font-black text-sm">飯店：寄放行李</h3><p class="text-xs text-stone-500 mt-1 font-bold">Hotel Vischio Kyoto</p></div>
+                    <i class="fas fa-hotel text-blue-300"></i>
+                </div>
+            </div>
+            <div class="relative z-10 ml-8" onclick="openModal('kinkakuji')">
+                <div class="timeline-dot bg-amber-600"></div>
+                <p class="timeline-time">13:40</p>
+                <div class="glass-card p-5"><h3 class="font-black text-amber-900 serif">金閣寺 (鹿苑寺)</h3><p class="text-xs text-amber-700 mt-1 font-bold uppercase">Golden Pavilion</p></div>
+            </div>
+            <div class="relative z-10 ml-8" onclick="openModal('kyoto_station')"><p class="timeline-time text-stone-400">Evening</p><div class="glass-card p-5"><h3 class="font-black text-sm">京都車站商圈自由活動</h3></div></div>
+        </div>
+
+        <!-- Day 2: 嵐山 -->
+        <div id="day2" class="day-section hidden space-y-10">
+            <div class="relative z-10 ml-8" onclick="openModal('jr_kameoka')">
+                <div class="timeline-dot bg-blue-400"></div>
+                <p class="timeline-time">09:00</p>
+                <div class="glass-card p-5 transport-card"><h3 class="font-black text-sm">JR 山陰本線 (乘車 25min)</h3><p class="text-xs text-blue-700 mt-1">京都車站 → 龜岡站</p></div>
+            </div>
+            <div class="relative z-10 ml-8" onclick="openModal('arashiyama_train')">
+                <div class="timeline-dot bg-orange-400"></div>
+                <p class="timeline-time">10:00</p>
+                <div class="glass-card p-5 border-l-4 border-orange-400 flex justify-between items-center">
+                    <div><h3 class="font-black text-sm">嵯峨野小火車 (回嵐山)</h3><p class="text-xs text-stone-500">保津川絕景漫遊</p></div>
+                    <i class="fas fa-qrcode text-orange-300 text-xl"></i>
+                </div>
+            </div>
+            <div class="relative z-10 ml-8" onclick="openModal('bamboo')">
+                <div class="timeline-dot bg-green-700"></div>
+                <p class="timeline-time">Lunch</p>
+                <div class="glass-card p-5 border-l-4 border-green-600"><h3 class="font-black text-green-900">竹林小徑與渡月橋</h3><p class="text-xs text-green-700 mt-1">嵐山必訪經典路線與午餐</p></div>
+            </div>
+            <div class="relative z-10 ml-8" onclick="openModal('kamogawa')">
+                <div class="timeline-dot"></div>
+                <p class="timeline-time">15:30</p>
+                <div class="glass-card p-5"><h3 class="font-black">集合前往四條鴨川/京都站</h3></div>
+            </div>
+            <div class="relative z-10 ml-8"><p class="timeline-time text-stone-400">Evening</p><div class="glass-card p-5 bg-stone-50"><h3 class="font-black text-stone-600 font-bold">晚上自由活動</h3></div></div>
+        </div>
+
+        <!-- Day 3: 除夕 -->
+        <div id="day3" class="day-section hidden space-y-10">
+            <div class="relative z-10 ml-8" onclick="openModal('nanzenji')"><p class="timeline-time">09:00</p><div class="glass-card p-5"><h3 class="font-black">南禪寺：紅磚水道橋</h3></div></div>
+            <div class="relative z-10 ml-8" onclick="openModal('kiyomizu')"><p class="timeline-time">12:00</p><div class="glass-card p-5 border-l-4 border-red-700"><h3 class="font-black text-red-900">清水寺年越散策</h3><p class="text-xs text-red-700 font-bold mt-1">二寧坂與產寧坂自由活動</p></div></div>
+            <div class="relative z-10 ml-8" onclick="openModal('ashioto')">
+                <div class="timeline-dot bg-orange-600"></div>
+                <p class="timeline-time text-red-600">Dinner</p>
+                <div class="glass-card p-5 bg-orange-50 border border-orange-200 flex justify-between items-center"><h3 class="font-black text-orange-900">除夕晚宴：あしおと</h3><i class="fas fa-utensils text-orange-300"></i></div>
+            </div>
+        </div>
+
+        <!-- Day 4: 京都 -> 名古屋 -->
+        <div id="day4" class="day-section hidden space-y-10">
+            <div class="relative z-10 ml-8"><p class="timeline-time">Morning</p><div class="glass-card p-5"><h3 class="font-black text-stone-400">京都自由活動</h3></div></div>
+            <div class="relative z-10 ml-8" onclick="openModal('shinkansen_nagoya')">
+                <div class="timeline-dot bg-blue-400"></div>
+                <p class="timeline-time">Noon</p>
+                <div class="glass-card p-5 transport-card shadow-sm"><h3 class="font-black text-blue-900">新幹線：京都 → 名古屋 (35min)</h3><p class="text-xs text-blue-700 mt-1 font-bold">乘車直達名古屋中心</p></div>
+            </div>
+            <div class="relative z-10 ml-8" onclick="openModal('nagoya_hotel')">
+                <div class="timeline-dot bg-blue-500"></div>
+                <p class="timeline-time">13:30</p>
+                <div class="glass-card p-5 border-l-4 border-blue-500 flex justify-between items-center">
+                    <div><h3 class="font-black text-sm">飯店：行李寄放</h3><p class="text-xs text-stone-500 font-bold mt-1">Prince Smart Inn Sakae</p></div>
+                    <i class="fas fa-hotel text-blue-300"></i>
+                </div>
+            </div>
+            <div class="relative z-10 ml-8" onclick="openModal('osu')"><p class="timeline-time text-pink-600">Afternoon</p><div class="glass-card p-5"><h3 class="font-black text-pink-900 underline">大須商店街漫遊</h3></div></div>
+        </div>
+
+        <!-- Day 5: teamLab -->
+        <div id="day5" class="day-section hidden space-y-10">
+            <div class="relative z-10 ml-8" onclick="openModal('shinkansen_kyoto')">
+                <div class="timeline-dot bg-blue-400"></div>
+                <p class="timeline-time text-blue-800">09:00</p>
+                <div class="glass-card p-5 transport-card"><h3 class="font-black text-blue-900">新幹線：名古屋 → 京都 (35min)</h3></div>
+            </div>
+            <div class="relative z-10 ml-8" onclick="openModal('teamlab')">
+                <div class="timeline-dot bg-purple-600"></div>
+                <p class="timeline-time font-black text-purple-700">teamLab</p>
+                <div class="glass-card p-6 border-l-4 border-purple-500 flex justify-between items-center shadow-lg"><div><h3 class="font-black text-purple-900 text-lg uppercase">Biovortex Kyoto</h3><p class="text-xs text-purple-600 mt-1">感官沉浸藝術體驗</p></div><i class="fas fa-qrcode text-purple-300 text-2xl"></i></div>
+            </div>
+            <div class="relative z-10 ml-8" onclick="openModal('shinkansen_back_nagoya')">
+                <div class="timeline-dot bg-blue-400"></div>
+                <p class="timeline-time text-stone-400">Evening</p>
+                <div class="glass-card p-5 transport-card opacity-80"><h3 class="font-black text-blue-900">新幹線：京都 → 名古屋 (35min)</h3></div>
+            </div>
+        </div>
+
+        <!-- Day 6: 分團 -->
+        <div id="day6" class="day-section hidden space-y-10">
+            <div class="relative z-10 ml-8">
+                <div class="timeline-dot"></div>
+                <p class="timeline-time text-blue-900">Split</p>
+                <div class="space-y-4">
+                    <div class="glass-card p-5 bg-blue-50 flex justify-between items-center" onclick="openModal('ghibli')">
+                        <div><h3 class="font-black text-blue-900 uppercase">A：吉卜力公園</h3><p class="text-xs text-blue-500 mt-1 font-bold">愛·地球博記念公園</p></div>
+                        <i class="fas fa-ticket-alt text-blue-300"></i>
+                    </div>
+                    <div class="glass-card p-5 bg-emerald-50 flex justify-between items-center" onclick="openModal('ropeway')">
+                        <div><h3 class="font-black text-emerald-900 uppercase tracking-tighter">B：新穗高纜車一日遊</h3><p class="text-xs text-emerald-600 mt-1 font-bold">高山絕景</p></div>
+                        <i class="fas fa-bus text-emerald-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Day 7: 賦歸 -->
+        <div id="day7" class="day-section hidden space-y-10">
+            <div class="relative z-10 ml-8" onclick="openModal('castle')"><p class="timeline-time">10:00</p><div class="glass-card p-5"><h3 class="font-black text-yellow-900 serif tracking-wide">名古屋城參觀</h3></div></div>
+            <div class="relative z-10 ml-8" onclick="openModal('musky')">
+                <div class="timeline-dot bg-blue-400"></div>
+                <p class="timeline-time">18:00</p>
+                <div class="glass-card p-5 transport-card"><h3 class="font-black text-blue-900">名鐵特急 μ-Sky (乘車 28min)</h3><p class="text-xs text-blue-700 mt-1">名古屋站 → 中部機場 (NGO)</p></div>
+            </div>
+            <div class="relative z-10 ml-8" onclick="openModal('it209')">
+                <div class="timeline-dot bg-stone-800"></div>
+                <p class="timeline-time">21:15</p>
+                <div class="glass-card p-5 bg-stone-800 text-white flex justify-between items-center shadow-2xl">
+                    <div>
+                        <span class="text-[9px] bg-orange-500 px-2 py-0.5 rounded font-black mb-1.5 inline-block uppercase tracking-wider">Flight IT209</span>
+                        <h3 class="font-black text-base">名古屋 NGO → 桃園 TPE</h3>
+                        <p class="text-[10px] text-orange-300 mt-1 font-bold">18:45 建議抵達櫃檯報到</p>
+                    </div>
+                    <i class="fas fa-qrcode text-xl opacity-60"></i>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 底部導覽列 -->
+    <footer class="fixed bottom-0 left-0 right-0 bg-white border-t p-2 flex justify-around items-center z-50 h-[75px] shadow-2xl">
+        <button onclick="openModal('info_food')" class="flex flex-col items-center"><i class="fas fa-utensils text-orange-400 text-xl"></i><span class="text-[9px] text-stone-500 font-black mt-1">美食攻略</span></button>
+        <button onclick="openModal('info_buy')" class="flex flex-col items-center"><i class="fas fa-shopping-bag text-stone-400 text-xl"></i><span class="text-[9px] text-stone-500 font-black mt-1">伴手禮</span></button>
+        <div class="w-14 h-14 bg-[#5c4a31] rounded-full -mt-12 border-[6px] border-[#f8f7f2] flex items-center justify-center shadow-lg active:scale-90 transition-transform" onclick="window.scrollTo({top:0, behavior:'smooth'})"><i class="fas fa-chevron-up text-white"></i></div>
+        <button onclick="openModal('info_accommodation')" class="flex flex-col items-center"><i class="fas fa-hotel text-stone-400 text-xl"></i><span class="text-[9px] text-stone-500 font-black mt-1">住宿資訊</span></button>
+        <button onclick="openModal('info_emergency')" class="flex flex-col items-center"><i class="fas fa-phone-alt text-red-500 text-xl"></i><span class="text-[9px] text-stone-500 font-black mt-1">緊急聯絡</span></button>
+    </footer>
+
+    <!-- 彈出視窗 -->
+    <div id="modal-overlay" onclick="closeModal()">
+        <div id="modal-card" onclick="event.stopPropagation()">
+            <div id="modal-content" class="p-8 max-h-[75vh] overflow-y-auto no-scrollbar"></div>
+            <button onclick="closeModal()" class="w-full py-5 bg-stone-50 text-stone-400 font-black text-xs border-t tracking-widest uppercase">Close</button>
+        </div>
+    </div>
+
+    <script>
+        function showDay(dayNum, btn) {
+            document.querySelectorAll('.day-section').forEach(s => s.classList.add('hidden'));
+            document.getElementById('day' + dayNum).classList.remove('hidden');
+            document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        const infoData = {
+            'it210': { title: 'TigerAir IT210', suggestedArrival: '04:30 (T1 櫃檯)', story: 'IT210 是台灣虎航飛往關西的晨間黃金班次。10:25 AM 準時抵達，下飛機後預計 11:30 完成出境。', tips: '記得先登錄 Visit Japan Web 取得 QR Code。預約代號：TIG-882299。', qr: true, vjwUrl: 'https://vjw-lp.digital.go.jp/zh-hant/' },
+            'it209': { title: 'TigerAir IT209', suggestedArrival: '18:45 (中部機場)', story: '回程班次。由名古屋中部機場 NGO 直飛桃園 TPE。預計 23:50 抵台。', tips: '中部機場免稅店非常好逛，建議預留充足採買時間。', qr: true },
+            'haruka_kix': { title: '關空特急 Haruka', story: '直達京都車站最快的交通工具。與 Hello Kitty 聯名的車廂非常可愛。', tips: '乘車約 80 分鐘。持車票刷卡進站。', map: 'https://www.google.com/maps/search/?api=1&query=KIX+Station' },
+            'jr_kameoka': { title: 'JR 山陰本線', story: '由京都車站前往龜岡站的通勤支線。', tips: '乘車約 25-30 分鐘。建議提早到月台候車。', map: 'https://www.google.com/maps/search/?api=1&query=JR+Kameoka+Station' },
+            'arashiyama_train': { title: '嵯峨野小火車', story: '利用廢棄的舊山陰支線，沿著保津川溪谷行駛，是嵐山的靈魂行程。', tips: '【攻略】預約 5 號車廂（富貴號）視野無死角拍照最美。', qr: true, map: 'https://www.google.com/maps/search/?api=1&query=トロッコ亀岡駅' },
+            'kyoto_hotel': { title: 'Hotel Vischio Kyoto', story: 'GRANVIA 集團營運，質感極高，位於京都車站八條口正對面。', facilities: '• 2F 大浴場 (15:00-01:00)<br>• 自助行李寄存室 (Check-in前後均可用)<br>• 全室加濕空氣清淨機<br>• 2F 休息區提供免費咖啡飲品', phone: '+81 75-251-1100', bookingID: 'VIS-KYOTO-0214', qr: true, map: 'https://www.google.com/maps/search/?api=1&query=Hotel+Vischio+Kyoto', web: 'https://www.hotelvischio-kyoto.jp/' },
+            'nagoya_hotel': { title: 'Prince Smart Inn Sakae', story: '王子飯店旗下主打科技智慧的飯店，位於名古屋精華商圈「榮」。', facilities: '• 全自動無人自助 Check-in 機<br>• 入住即享免費簡單早餐 (輕食組合)<br>• 附設 24H 自助儲物櫃與洗衣房<br>• 生活機能極佳，周邊百貨公司林立', phone: '+81 52-251-1110', bookingID: 'PRI-NAGOYA-0217', qr: true, map: 'https://www.google.com/maps/search/?api=1&query=Prince+Smart+Inn+Nagoya+Sakae', web: 'https://www.princehotels.co.jp/psi/sakae/' },
+            'kinkakuji': { title: '金閣寺 (鹿苑寺)', story: '世界遺產。外牆全由純金金箔貼就。目前的建築為重建，但其輝煌倒影仍震撼人心。', tips: '【攻略】門票本身就是一張開運平安符，請勿摺疊。建議 15:30 抵達金箔發光最美。', map: 'https://www.google.com/maps/search/?api=1&query=金閣寺' },
+            'bamboo': { title: '嵐山竹林小徑/渡月橋', story: '穿梭千年竹林長廊。渡月橋橫跨保津川，其名由來是因上皇見到明月如同渡橋一般。', tips: '【美食】必吃古都芋可樂餅、% Arabica 拿鐵。', map: 'https://www.google.com/maps/search/?api=1&query=嵐山竹林小徑' },
+            'nanzenji': { title: '南禪寺：水閣閣', story: '境內有仿羅馬風格的紅磚造水道橋。當時為引琵琶湖水入京，現為熱門日劇取景點。', tips: '【攻略】必拍水道橋拱廊。附近湯豆腐料理名店聚集。', map: 'https://www.google.com/maps/search/?api=1&query=南禪寺' },
+            'kiyomizu': { title: '清水寺 (年越巡禮)', story: '全木造懸空舞台，未用一顆釘子。京都最古老的寺院之一，家族祈福聖地。', tips: '【攻略】買七味家本舖調味粉、京八橋。二寧坂漫步非常有氣氛。', map: 'https://www.google.com/maps/search/?api=1&query=清水寺' },
+            'ashioto': { title: 'あしおと 野菜酒場', story: '京都除夕晚宴首選。主打產地直送京野菜創意料理，溫馨且地道。', tips: '【預約號】ASH-NYE-2026<br>必點：季節土鍋飯、烤野菜盛合。', qr: true, map: 'https://www.google.com/maps/search/?api=1&query=あしおと+京都' },
+            'shinkansen_nagoya': { title: '東海道新幹線 (京→名)', story: '日本高速鐵路的代表。單程僅需約 35 分鐘。', tips: '於京都車站中央口 2F 新幹線閘門進站。' },
+            'shinkansen_kyoto': { title: '新幹線 (名→京)', story: '前往京都體驗 teamLab。單程約 35 分鐘。', tips: '名古屋站新幹線閘門進站。' },
+            'shinkansen_back_nagoya': { title: '新幹線 (京→名)', story: '結束 teamLab 體驗後返回名古屋飯店休息。', tips: '回程約 35 分鐘。' },
+            'osu': { title: '大須商店街', story: '名古屋版的小下北澤。結合古著店、電器行與在地小點心。', tips: '必吃矢場味噌豬排。必逛 Alice on Wednesday 飾品店。', map: 'https://www.google.com/maps/search/?api=1&query=大須商店街' },
+            'teamlab': { title: 'teamLab Biovortex', story: '京都植物園常設展。透過數位科技將自然與藝術感應完美融合。', tips: '【攻略】穿純白色衣物拍照最美。注意部分地面為鏡面。', qr: true, map: 'https://www.google.com/maps/search/?api=1&query=teamLab+Biovortex' },
+            'ghibli': { title: '吉卜力公園 (方案 A)', story: '重現宮崎駿動畫經典場景。大倉庫、青春之丘絕對讓您流連忘返。', tips: '【重要】入場須核對護照正本。預約號：GB-882299。', qr: true, map: 'https://www.google.com/maps/search/?api=1&query=吉卜力公園' },
+            'ropeway': { title: '新穗高纜車 (方案 B)', story: '日本唯一雙層纜車。海拔 2156 公尺欣賞雪白北阿爾卑斯。', tips: '【攻略】展望台氣溫約 -10 度，需備妥全套禦寒。必吃飛驒牛包子。', qr: true, map: 'https://www.google.com/maps/search/?api=1&query=新穂高ロープウェイ' },
+            'castle': { title: '名古屋城', story: '德川家康下令建造。屋頂金鯱重達數十公斤。本丸御殿壁畫極其奢華。', tips: '必看金鯱、必逛本丸御殿。買坂角海老煎餅。', map: 'https://www.google.com/maps/search/?api=1&query=名古屋城' },
+            'musky': { title: '名鐵 μ-Sky', story: '名古屋往機場最快的全對號座特急，乘車僅需 28 分鐘。', tips: '名鐵名古屋站 1F 候車。需另購特急券。' },
+            'info_food': { title: '🍜 美食攻略', content: '• 京都：湯豆腐(南禪寺)、中村藤吉抹茶、Ashioto野菜<br>• 名古屋：手羽先(世界之山將)、味噌豬排(矢場)、鰻魚飯(蓬萊軒)' },
+            'info_buy': { title: '🛍️ 伴手禮清單', content: '• 坂角總本舖(蝦餅)<br>• 嵐山優佳雅(吸油面紙)<br>• 清水寺七味粉<br>• 金閣寺御守' },
+            'info_accommodation': { title: '🏨 住宿詳細資訊', content: '<div class="space-y-4"><div class="p-4 bg-sky-100 rounded-2xl"><b>京都: Hotel Vischio</b><br><button onclick="openModal(\'kyoto_hotel\')" class="text-blue-600 font-bold text-xs mt-2 underline">代碼、設施與導航</button></div><div class="p-4 bg-sky-100 rounded-2xl"><b>名古屋: Prince Smart Inn</b><br><button onclick="openModal(\'nagoya_hotel\')" class="text-blue-600 font-bold text-xs mt-2 underline">代碼、設施與導航</button></div></div>' },
+            'info_emergency': { title: '🚨 緊急聯絡', content: '<div class="space-y-4"><a href="tel:110" class="flex justify-between items-center p-3 bg-red-50 rounded-xl font-bold">警察局 (110)<i class="fas fa-phone"></i></a><a href="tel:119" class="flex justify-between items-center p-3 bg-red-50 rounded-xl font-bold">消防急救 (119)<i class="fas fa-phone"></i></a><a href="tel:+81332807811" class="flex justify-between items-center p-3 bg-red-50 rounded-xl font-bold">駐日代表處<i class="fas fa-phone"></i></a></div>' },
+            'kyoto_station': { title: '京都車站', story: '拉麵小路、空中走廊。', map: 'https://www.google.com/maps/search/?api=1&query=京都車站' },
+            'kamogawa': { title: '四條鴨川', story: '京都最具氣息的河畔。', map: 'https://www.google.com/maps/search/?api=1&query=四條鴨川' }
+        };
+
+        function openModal(key) {
+            const d = infoData[key];
+            if (!d) return;
+            let html = `<h2 class="text-2xl font-black text-stone-800 mb-4">${d.title}</h2>`;
+            if (d.suggestedArrival) html += `<div class="mb-4 text-xs font-black text-white bg-orange-500 p-4 rounded-xl flex items-center shadow-lg"><i class="fas fa-clock mr-2 text-lg"></i>建議抵達報到：${d.suggestedArrival}</div>`;
+            if (d.qr) html += `<div class="bg-stone-50 border border-dashed border-stone-300 p-4 rounded-2xl text-center mb-5"><div class="qr-placeholder">QR CODE</div><p class="font-black text-xs mt-2 tracking-widest text-stone-600 uppercase">${d.bookingID || 'RES-2026-CODE'}</p></div>`;
+            if (d.story) html += `<div class="mb-4 text-xs leading-relaxed text-stone-500 bg-stone-50 p-4 rounded-xl border border-stone-100 font-bold italic">【介紹/故事】<br>${d.story}</div>`;
+            if (d.vjwUrl) html += `<a href="${d.vjwUrl}" target="_blank" class="btn-action btn-vjw shadow-md"><i class="fas fa-file-import mr-2"></i> Visit Japan Web (入境)</a>`;
+            if (d.facilities) html += `<div class="mb-4 text-xs leading-relaxed text-blue-800 bg-blue-50 p-4 rounded-xl font-bold tracking-tight">【設施與服務】<br>${d.facilities}</div>`;
+            if (d.phone) html += `<p class="text-xs font-bold text-stone-600 mb-4"><i class="fas fa-phone-alt mr-2 text-stone-400"></i>電話：<a href="tel:${d.phone}" class="underline font-black">${d.phone}</a></p>`;
+            if (d.tips) html += `<div class="mb-4 text-xs leading-relaxed text-amber-800 bg-amber-50 p-4 rounded-xl border border-amber-100 font-bold">【攻略】<br>${d.tips}</div>`;
+            if (d.content) html += `<div class="text-sm leading-loose text-stone-600 font-bold">${d.content}</div>`;
+            if (d.map) html += `<a href="${d.map}" target="_blank" class="btn-action btn-map shadow-sm"><i class="fas fa-location-arrow mr-2"></i> 開啟地圖導覽</a>`;
+            if (d.web) html += `<a href="${d.web}" target="_blank" class="btn-action btn-web border border-stone-200 shadow-sm"><i class="fas fa-globe mr-2"></i> 前往官方網站</a>`;
+            
+            document.getElementById('modal-content').innerHTML = html;
+            document.getElementById('modal-overlay').classList.add('active');
+        }
+
+        function closeModal() { document.getElementById('modal-overlay').classList.remove('active'); }
+    </script>
+</body>
+</html>
