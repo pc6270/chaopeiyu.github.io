@@ -226,21 +226,14 @@
 
         <!-- Day 5: teamLab -->
         <div id="day5" class="day-section hidden space-y-10">
-            <!-- <div class="relative z-10 ml-8" onclick="openModal('shinkansen_kyoto')">
+            <div class="relative z-10 ml-8" onclick="openModal('magome_tsumago_trip')">
                 <div class="timeline-dot"></div>
-                <p class="timeline-time">09:00</p>
-                <div class="glass-card p-5 transport-card"><h3 class="font-black text-blue-900">新幹線：名古屋 → 京都 (35min)</h3></div>
+                <p class="timeline-time">08:30</p>
+                <div class="glass-card p-5 transport-card"><h3 class="font-black text-blue-900">馬妻籠宿一日遊</h3></div>
             </div>
-            <div class="relative z-10 ml-8" onclick="openModal('teamlab')">
+            <div class="relative z-10 ml-8">
                 <div class="timeline-dot"></div>
-                <p class="timeline-time font-black text-purple-700">teamLab</p>
-                <div class="glass-card p-6 border-l-4 border-purple-500 flex justify-between items-center shadow-lg"><div><h3 class="font-black text-purple-900 text-lg uppercase">Biovortex Kyoto</h3><p class="text-xs text-purple-600 mt-1">感官沉浸藝術體驗</p></div><i class="fas fa-qrcode text-purple-300 text-2xl"></i></div>
-            </div>
-            <div class="relative z-10 ml-8" onclick="openModal('shinkansen_back_nagoya')">
-                <div class="timeline-dot"></div>
-                <p class="timeline-time text-stone-400">晚上</p>
-                <div class="glass-card p-5 transport-card opacity-80"><h3 class="font-black text-blue-900">新幹線：京都 → 名古屋 (35min)</h3></div>
-            </div> -->
+                <p class="timeline-time text-stone-400">晚上</p><div class="glass-card p-5 bg-stone-50"><h3 class="font-black text-stone-600 font-bold">晚上自由活動</h3></div></div>
         </div>
 
         <!-- Day 6: 分團 -->
@@ -346,7 +339,70 @@
             'info_accommodation': { title: '🏨 住宿詳細資訊', content: '<div class="space-y-4"><div class="p-4 bg-sky-100 rounded-2xl"><b>京都: Hotel Vischio</b><br><button onclick="openModal(\'kyoto_hotel\')" class="text-blue-600 font-bold text-xs mt-2 underline">代碼、設施與導航</button></div><div class="p-4 bg-sky-100 rounded-2xl"><b>名古屋: Prince Smart Inn</b><br><button onclick="openModal(\'nagoya_hotel\')" class="text-blue-600 font-bold text-xs mt-2 underline">代碼、設施與導航</button></div></div>' },
             'info_emergency': { title: '🚨 緊急聯絡', content: '<div class="space-y-4"><a href="tel:110" class="flex justify-between items-center p-3 bg-red-50 rounded-xl font-bold">警察局 (110)<i class="fas fa-phone"></i></a><a href="tel:119" class="flex justify-between items-center p-3 bg-red-50 rounded-xl font-bold">消防急救 (119)<i class="fas fa-phone"></i></a><a href="tel:+81332807811" class="flex justify-between items-center p-3 bg-red-50 rounded-xl font-bold">駐日代表處<i class="fas fa-phone"></i></a></div>' },
             'kyoto_station': { title: '京都車站',imgUrl:'https://asset.japan.travel/image/upload/v1668488861/kyoto/Kyoto_t_id309_1.jpg', story: '拉麵小路、空中走廊。', map: 'https://www.google.com/maps/search/?api=1&query=京都車站' },
-            'kamogawa': { title: '四條鴨川',imgUrl:'https://cdn.zekkei-japan.jp/images/articles/middle_39b447a9315bf3926e9eb37591a0c909.jpg', story: '京都最具氣息的河畔。', map: 'https://www.google.com/maps/search/?api=1&query=四條鴨川' }
+            'kamogawa': { title: '四條鴨川',imgUrl:'https://cdn.zekkei-japan.jp/images/articles/middle_39b447a9315bf3926e9eb37591a0c909.jpg', story: '京都最具氣息的河畔。', map: 'https://www.google.com/maps/search/?api=1&query=四條鴨川' },
+            'magome_tsumago_trip': { 
+    title: '馬妻籠宿 & 犬山城一日遊', 
+    imgUrl:'https://res.klook.com/image/upload/c_crop,h_801,w_1280,x_0,y_26,z_0.6/w_750,h_469,c_fill,q_85/w_80,x_15,y_15,g_south_west,l_Klook_water_br_trans_yhcmh3/activities/fay2immqvkyl89gqsrtz.jpg',
+    story: '橫跨愛知與長野縣的經典江戶古道之旅，感受木曾路懷舊氛圍。',
+    content: `
+        <div class="space-y-4 mt-4">
+            <div class="flex gap-4 border-l-2 border-stone-200 pl-4 relative">
+                <div class="absolute w-3 h-3 bg-stone-400 rounded-full -left-[7px] top-1"></div>
+                <div>
+                    <p class="text-xs font-black text-stone-800">08:30 集合出發</p>
+                    <p class="text-[10px] text-stone-500">名古屋站太閣通口 (Ministop 門口)</p>
+                </div>
+            </div>
+            
+            <div class="flex gap-4 border-l-2 border-stone-200 pl-4 relative">
+                <div class="absolute w-3 h-3 bg-blue-500 rounded-full -left-[7px] top-1"></div>
+                <div>
+                    <p class="text-xs font-black text-blue-900">09:30 犬山城 & 三光稻荷神社</p>
+                    <p class="text-[10px] text-stone-600 mt-1">停留 60 分鐘。必看國寶犬山城與三光稻荷神社的粉紅愛心繪馬，祈求良緣。</p>
+                </div>
+            </div>
+
+            <div class="flex gap-4 border-l-2 border-stone-200 pl-4 relative">
+                <div class="absolute w-3 h-3 bg-emerald-500 rounded-full -left-[7px] top-1"></div>
+                <div>
+                    <p class="text-xs font-black text-emerald-900">12:00 惠那峽展望台</p>
+                    <p class="text-[10px] text-stone-600 mt-1">停留 30 分鐘。欣賞壯麗的斷崖與紅大橋，呼吸山間清新空氣。</p>
+                </div>
+            </div>
+
+            <div class="flex gap-4 border-l-2 border-stone-200 pl-4 relative">
+                <div class="absolute w-3 h-3 bg-orange-500 rounded-full -left-[7px] top-1"></div>
+                <div>
+                    <p class="text-xs font-black text-orange-900">13:20 馬籠宿</p>
+                    <p class="text-[10px] text-stone-600 mt-1">停留 90 分鐘（自由活動）。石板坡道兩旁林立江戶風情茶屋，感受中山道的歷史。</p>
+                </div>
+            </div>
+
+            <div class="flex gap-4 border-l-2 border-stone-200 pl-4 relative">
+                <div class="absolute w-3 h-3 bg-amber-700 rounded-full -left-[7px] top-1"></div>
+                <div>
+                    <p class="text-xs font-black text-amber-900">15:30 妻籠宿</p>
+                    <p class="text-[10px] text-stone-600 mt-1">停留 60 分鐘。日本首座重要傳統建築群保存區，木造町家建築極具古樸韻味。</p>
+                </div>
+            </div>
+
+            <div class="flex gap-4 border-l-2 border-stone-200 pl-4 relative">
+                <div class="absolute w-3 h-3 bg-stone-800 rounded-full -left-[7px] top-1"></div>
+                <div>
+                    <p class="text-xs font-black text-stone-800">18:20 抵達名古屋站</p>
+                    <p class="text-[10px] text-stone-500">結束充實的一日遊行程。</p>
+                </div>
+            </div>
+        </div>
+    `,
+    qrList: [ 
+        { label: 'Klook 憑證', url: './images/nagoya.jpg' }
+    ],
+    bookingID:'KLK8172035185',
+    voucherUrl: './files/a34046c-9402.pdf', 
+    tips: '8:30 請務必準時抵達名古屋站太閣通口-ministop 椿町店集合。展望台風大建議帶件外套。',
+    map: 'https://share.google/3bcrMTIjMMmeeWjAW' 
+},
         };
 
         function openModal(key) {
