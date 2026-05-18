@@ -421,12 +421,12 @@
                             Voucher (PDF)
                         </button>
                     </template>
-                    <!-- <template x-if="fromCategory">
+                    <template x-if="fromCategory">
                         <button @click="backToList()" class="w-full py-2.5 bg-sand text-moss rounded-full font-black text-[0.65rem] tracking-widest uppercase flex items-center justify-center gap-2">
                             <i data-lucide="arrow-left" style="width: 14px; height: 14px;"></i>
                             返回列表
                         </button>
-                    </template> -->
+                    </template>
                     
                     <div class="flex gap-2">
                         <template x-if="isHotel ? selectedHotel?.mapUrl : (selectedShopping?.mapUrl || selectedItem?.details?.Map)">
@@ -555,7 +555,7 @@
                     "neel nakazakicho": { img: "https://tasteofkansai.com/wp-content/uploads/2025/09/neelnakazaki05.jpg", desc: "中崎町的質感系獨棟老宅咖啡，以梨子商標與酥脆可麗餅聞名，充滿復古時髦感。" },
                     "中崎町": { img: "https://static.wixstatic.com/media/d8c572_89bef2ead1d44e779c260148723d41eb~mv2.jpg", desc: "漫步在二戰倖存的昭和時代街廓，巷弄內充滿文創店、咖啡館與復古雜貨。" },
                     "關西機場 → 桃園": { img: "https://hips.hearstapps.com/hmg-prod/images/tigerair-taiwan-295717542-469167378369389-3137216213443856898-n-649e6871e7c7f.jpg", desc: "結束 8 天的旅程返回台灣。記得檢查行李與護照。" },
-                    "Archi Coffee": { img:"https://img.vocus.cc/KuvmEJnryh5HmE-8iCotv8ZYu5_VMMNV9GC73JNexKo/w:1200/f:webp/plain/https://images.vocus.cc/5d615e4e-8993-4a51-ab90-b2d0b7f96fcd.jpg" }
+                   
                 },
 
                 days: [
