@@ -293,7 +293,15 @@
             <button @click="closeModal()" class="absolute top-6 right-6 z-10 w-10 h-10 bg-white/40 hover:bg-white/60 backdrop-blur-md rounded-full flex items-center justify-center text-moss transition-colors">
                 <i data-lucide="x" style="width: 20px; height: 20px;"></i>
             </button>
-
+            <div class="absolute top-6 left-6 right-6 z-10 flex items-center justify-between">
+                <button x-show="fromCategory" @click="backToList()" class="w-10 h-10 bg-rice-paper/80 hover:bg-white backdrop-blur-md rounded-full flex items-center justify-center text-moss transition-colors shadow-sm">
+                    <i data-lucide="arrow-left" style="width: 20px; height: 20px;"></i>
+                </button>
+                <div x-show="!fromCategory"></div>
+                <button @click="closeModal()" class="w-10 h-10 bg-rice-paper/80 hover:bg-white backdrop-blur-md rounded-full flex items-center justify-center text-moss transition-colors shadow-sm">
+                    <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                </button>
+            </div>
             <template x-if="modalImg">
                 <img :src="modalImg" class="w-full h-48 sm:h-60 object-cover" alt="">
             </template>
@@ -429,14 +437,21 @@
                     </template>
                     
                     <div class="flex gap-2">
-                        <template x-if="isHotel ? selectedHotel?.mapUrl : (selectedShopping?.mapUrl || selectedItem?.details?.Map)">
+                        <template x-if="isEmergency">
+                             <a :href="'tel:' + selectedEmergency.num" class="flex-1 bg-terracotta text-white font-black text-[0.65rem] tracking-widest uppercase py-3 rounded-full flex items-center justify-center gap-2 shadow-md shadow-terracotta/20">
+                                <i data-lucide="phone" style="width: 14px; height: 14px;"></i>
+                                Call
+                            </a>
+                        </template>
+                        <template x-if="(isHotel && selectedHotel.mapUrl) || (isShopping && selectedShopping.mapUrl) || (!isEmergency && selectedItem?.details?.Map)">
                             <button @click="window.open(isHotel ? selectedHotel.mapUrl : (selectedShopping?.mapUrl || selectedItem?.details?.Map))" class="flex-1 bg-moss text-white font-black text-[0.65rem] tracking-widest uppercase py-3 rounded-full flex items-center justify-center gap-2 shadow-md shadow-moss/20">
                                 <i data-lucide="map" style="width: 14px; height: 14px;"></i>
                                 Map
                             </button>
                         </template>
+                        
                          <!-- Header Actions -->
-                        <div class="absolute top-6 left-6 right-6 z-10 flex items-center justify-between">
+                        <!-- <div class="absolute top-6 left-6 right-6 z-10 flex items-center justify-between">
                             <button x-show="fromCategory" @click="backToList()" class="w-10 h-10 bg-rice-paper/80 hover:bg-white/60 backdrop-blur-md rounded-full flex items-center justify-center text-moss transition-colors shadow-sm">
                                 <i data-lucide="arrow-left" style="width: 20px; height: 20px;"></i>
                             </button>
@@ -444,7 +459,7 @@
                             <button @click="closeModal()" class="w-10 h-10 bg-rice-paper/80 hover:bg-white/60 backdrop-blur-md rounded-full flex items-center justify-center text-moss transition-colors shadow-sm">
                                 <i data-lucide="x" style="width: 20px; height: 20px;"></i>
                             </button>
-                        </div>
+                        </div> -->
                     
                     </div>
                 
@@ -640,11 +655,15 @@
                     return this.placeInfo[item.title] || {};
                 },
                  resetFlags() {
+                    this.modalImg = '';
+                    this.fromCategory = null;
+                    this.selectedItem = null;
+                    this.selectedHotel = null;
+                    this.selectedEmergency = null;
+                    this.selectedShopping = null;
                     this.isHotel = false;
                     this.isEmergency = false;
                     this.isShopping = false;
-                    this.modalImg = '';
-                    this.fromCategory = null;
                 },
 
                 openModal(item) {
@@ -703,6 +722,13 @@
 
                 openCategoryModal(category) {
                     this.activeCategory = category;
+                    this.selectedItem = null;
+                    this.selectedHotel = null;
+                    this.selectedEmergency = null;
+                    this.selectedShopping = null;
+                    this.isHotel = false;
+                    this.isEmergency = false;
+                    this.isShopping = false;
                     if (category === 'hotels') {
                         this.categoryTitle = '住宿一覽';
                         this.categorySub = 'Accommodation';
