@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大阪京都：魔法師之旅 2026</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        moss: '#8C9A7E',
+                        terracotta: '#C18C5D',
+                        'rice-paper': '#FDFCFB',
+                        sand: '#F2EDE7',
+                        stone: '#E8E2DA',
+                    },
+                    fontFamily: {
+                        serif: ['Fraunces', 'serif'],
+                        sans: ['Nunito', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            background-color: #FDFCFB;
+            color: #1d1b18;
+            font-family: 'Nunito', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3BaseFilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/feTurbulence%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.04;
+            mix-blend-mode: multiply;
+            z-index: 9999;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        [x-cloak] { display: none !important; }
+
+        .modal-enter { opacity: 0; transform: scale(0.95) translateY(20px); }
+        .modal-enter-active { opacity: 1; transform: scale(1) translateY(0); transition: all 0.3s ease-out; }
+    </style>
+</head>
+<body x-data="appData()" x-init="init()">
+
+    <!-- Header -->
+    <header class="sticky top-2 z-[200] mx-3 bg-rice-paper/80 backdrop-blur-md px-4 py-2.5 flex items-center justify-between rounded-full shadow-lg border border-moss/10 sm:top-4 sm:mx-4 sm:px-6 sm:py-3">
+        <div class="logo font-serif font-extrabold text-base flex items-center gap-2 sm:text-lg">
+            ✦ <span class="text-moss">魔法師</span>之旅
+        </div>
+        <div class="text-[0.6rem] font-bold text-moss/60 uppercase tracking-widest hidden sm:block">
+            06.03 - 06.10
+        </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-4 py-8 sm:px-5 sm:py-12">
+        <!-- Hero -->
+        <div class="text-center mb-10">
+            <div class="inline-block text-[0.6rem] font-bold text-terracotta bg-terracotta/10 px-3 py-1 rounded-full mb-3 tracking-[0.2em] uppercase">
+                Tour Guide 2026
+            </div>
+            <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-3 text-moss font-serif leading-tight">
+                大阪京都<br />魔法師之旅 🧙‍♂️
+            </h1>
+            <p class="text-moss/80 text-sm sm:text-base font-medium">
+                8天7夜 · 大阪 · 京都 · 金澤
+            </p>
+        </div>
+
+        <!-- Day Selector -->
+        <div class="my-6 px-4 overflow-hidden">
+            <div class="mx-auto bg-sand/50 rounded-full shadow-inner max-w-3xl overflow-x-auto no-scrollbar scroll-smooth touch-pan-x snap-x snap-mandatory">
+                <div class="flex gap-4 p-2.5 min-w-max">
+                    <template x-for="day in days" :key="day.id">
+                        <button
+                            @click="activeDay = day.id"
+                            :class="activeDay === day.id ? 'bg-moss text-white scale-110 shadow-lg shadow-moss/30' : 'bg-white text-moss hover:bg-stone/50 shadow-sm'"
+                            class="flex flex-col items-center justify-center w-12 h-12 rounded-full transition-all duration-300 shrink-0 snap-center"
+                        >
+                            <span class="font-serif text-[0.75rem] font-black leading-none" x-text="'D' + day.id"></span>
+                            <span class="text-[0.4rem] font-bold uppercase mt-0.5" x-text="day.date.split('/')[1] + ' JUN'"></span>
+                        </button>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Day Content -->
+        <div class="mt-8">
+            <div class="space-y-5">
+                <div class="px-1 mb-5">
+                    <h2 class="text-xl sm:text-2xl font-extrabold mb-1 text-moss font-serif" x-text="currentDay().date + ' ' + currentDay().title"></h2>
+                    <p class="text-[0.65rem] font-bold text-terracotta uppercase tracking-[0.15em] opacity-80" x-text="currentDay().sub"></p>
+                </div>
+
+                <template x-for="(item, idx) in currentDay().items" :key="idx">
+                    <div
+                        @click="openModal(item)"
+                        class="bg-white rounded-3xl shadow-xl shadow-moss/5 border border-moss/5 cursor-pointer transition-all duration-400 group overflow-hidden"
+                    >
+                        <div class="flex p-4 gap-4">
+                            <div class="w-20 h-20 rounded-2xl overflow-hidden shrink-0 shadow-inner bg-sand">
+                                <template x-if="getItemInfo(item).img">
+                                    <img :src="getItemInfo(item).img" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="">
+                                </template>
+                                <template x-if="!getItemInfo(item).img">
+                                    <div class="w-full h-full flex items-center justify-center text-3xl" x-text="item.icon"></div>
+                                </template>
+                            </div>
+                            <div class="flex-1 flex flex-col justify-center min-w-0">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <span class="font-serif text-[0.6rem] text-terracotta font-black uppercase tracking-widest bg-terracotta/5 px-2 py-0.5 rounded-md" x-text="item.time"></span>
+                                    <span :class="{
+                                        'bg-blue-50 text-blue-600 border-blue-100': item.badge === '交通',
+                                        'bg-moss/10 text-moss border-moss/20': item.badge === '行程',
+                                        'bg-terracotta/10 text-terracotta border-terracotta/20': item.badge === '用膳',
+                                        'bg-purple-50 text-purple-600 border-purple-100': item.badge === '住宿',
+                                        'bg-stone-50 text-stone-500 border-stone-200': !['交通', '行程', '用膳', '住宿'].includes(item.badge)
+                                    }" class="text-[0.55rem] font-black tracking-widest uppercase shrink-0 border px-2 py-0.5 rounded-full" x-text="item.badge"></span>
+                                </div>
+                                <h3 class="text-base font-bold text-moss font-serif truncate leading-tight group-hover:text-terracotta transition-colors" x-text="item.title"></h3>
+                                <template x-if="item.notice">
+                                    <div class="mt-1.5 inline-flex items-center text-[0.55rem] text-terracotta font-extrabold px-2.5 py-0.5 rounded-full bg-terracotta/10 w-fit">
+                                        ✧ <span x-text="item.notice"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Lists -->
+    <footer class="mt-16 bg-stone/40 rounded-t-[4rem] py-16">
+        <div class="max-w-3xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 gap-12">
+            <!-- Hotels -->
+            <div>
+                <h3 class="text-sm font-bold uppercase tracking-widest text-moss mb-6 flex items-center gap-3">
+                    <span class="w-2.5 h-2.5 rounded-full bg-terracotta"></span> 🏨 住宿一覽
+                </h3>
+                <div class="space-y-4">
+                    <template x-for="(h, key) in hotels" :key="key">
+                        <div
+                            @click="openHotelModal(h)"
+                            class="p-3 bg-white rounded-2xl shadow-md border border-moss/5 cursor-pointer transition-transform"
+                        >
+                            <div class="flex items-center gap-4">
+                                <div class="text-xl w-10 h-10 bg-sand rounded-full flex items-center justify-center shrink-0" x-text="h.emoji"></div>
+                                <div class="min-w-0">
+                                    <div class="font-bold text-xs text-moss font-serif truncate" x-text="h.name"></div>
+                                    <div class="text-[0.55rem] font-bold text-terracotta tracking-widest uppercase" x-text="h.dates"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Emergency -->
+            <div>
+                <h3 class="text-sm font-bold uppercase tracking-widest text-moss mb-6 flex items-center gap-3">
+                    <span class="w-2.5 h-2.5 rounded-full bg-moss/40"></span> 📞 緊急聯絡
+                </h3>
+                <div class="space-y-3">
+                    <template x-for="c in emergencyContacts" :key="c.n">
+                        <div class="flex items-center justify-between p-4 bg-white/60 rounded-[1.5rem] border border-moss/5 hover:bg-white transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="text-xl" x-text="c.ico"></div>
+                                <div class="text-[0.8rem] font-bold text-moss" x-text="c.n"></div>
+                            </div>
+                            <div class="text-[0.8rem] text-terracotta font-black font-serif" x-text="c.num"></div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+        <div class="mt-12 pt-8 text-center text-[0.65rem] font-bold text-stone-500 tracking-[0.2em] border-t border-moss/10">
+            SUMMER TOUR 2026
+        </div>
+    </footer>
+
+    <!-- Modal -->
+    <div x-cloak x-show="isModalOpen" 
+         class="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-moss/80 backdrop-blur-xl"
+         @click="closeModal()"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+        
+        <div x-show="isModalOpen"
+             class="relative w-full max-w-lg bg-rice-paper rounded-[2.5rem] shadow-2xl overflow-hidden"
+             @click.stop
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="scale-95 translate-y-4"
+             x-transition:enter-end="scale-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="scale-100 translate-y-0"
+             x-transition:leave-end="scale-95 translate-y-4">
+            
+            <button @click="closeModal()" class="absolute top-6 right-6 z-10 w-10 h-10 bg-white/40 hover:bg-white/60 backdrop-blur-md rounded-full flex items-center justify-center text-moss transition-colors">
+                <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+            </button>
+
+            <template x-if="modalImg">
+                <img :src="modalImg" class="w-full h-48 sm:h-60 object-cover" alt="">
+            </template>
+            <template x-if="!modalImg">
+                <div class="w-full h-32 sm:h-40 bg-sand flex items-center justify-center text-5xl" x-text="modalEmoji"></div>
+            </template>
+
+            <div class="p-6 sm:p-8 overflow-y-auto no-scrollbar max-h-[70vh]">
+                <template x-if="selectedItem?.suggestedArrival">
+                    <div class="mb-4 text-[0.65rem] font-bold text-white bg-terracotta px-4 py-2.5 rounded-xl flex items-center shadow-lg">
+                        <i data-lucide="clock" class="mr-2 shrink-0" style="width: 14px; height: 14px;"></i>
+                        建議抵達報到：<span x-text="selectedItem.suggestedArrival"></span>
+                    </div>
+                </template>
+
+                <div class="text-[0.6rem] font-black text-moss mb-1 tracking-[0.2em] uppercase">
+                    <template x-if="isHotel"><span>Accommodation</span></template>
+                    <template x-if="!isHotel"><span x-text="selectedItem?.type || ''"></span></template>
+                     
+                    <template x-if="isHotel"><span x-text="selectedHotel?.emoji || ''"></span></template>
+                    <template x-if="!isHotel"><span x-text="selectedItem?.time || ''"></span></template>
+                </div>
+                <h2 class="text-2xl font-extrabold mb-3 text-moss font-serif leading-tight" x-text="isHotel ? (selectedHotel?.name || '') : (selectedItem?.title || '')"></h2>
+                
+                <p class="text-sm text-moss leading-relaxed mb-6 font-medium" x-text="modalDesc"></p>
+
+                <div class="bg-stone/30 p-5 rounded-[1.5rem] mb-6 space-y-2.5">
+                    <div class="text-[0.65rem] font-black text-lime-950 mb-2 uppercase tracking-widest border-b border-moss/20 pb-1">資訊</div>
+                    <template x-if="isHotel && selectedHotel">
+                         <div class="space-y-1.5">
+                             <template x-if="selectedHotel.platform">
+                                <div class="flex justify-between items-center border-b border-moss/10 py-1.5">
+                                    <span class="text-[0.65rem] font-black text-lime-950 tracking-widest uppercase">訂房平台</span>
+                                    <span class="text-xs font-bold text-moss" x-text="selectedHotel.platform""></span>
+                                </div>
+                            </template>
+                            <div class="flex justify-between items-center border-b border-moss/10 py-1.5">
+                                <span class="text-[0.65rem] font-black text-lime-950 tracking-widest uppercase">CHECK-IN</span>
+                                <span class="text-xs font-bold text-moss" x-text="selectedHotel.checkin"></span>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-moss/10 py-1.5">
+                                <span class="text-[0.65rem] font-black text-lime-950 tracking-widest uppercase">CHECK-OUT</span>
+                                <span class="text-xs font-bold text-moss" x-text="selectedHotel.checkout"></span>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-moss/10 py-1.5">
+                                <span class="text-[0.65rem] font-black text-lime-950 tracking-widest uppercase">PHONE</span>
+                                <span class="text-xs font-bold text-moss" x-text="selectedHotel.phone"></span>
+                            </div>
+                            <template x-if="selectedHotel.bookingID">
+                                <div class="flex justify-between items-center border-b border-moss/10 py-1.5">
+                                    <span class="text-[0.65rem] font-black text-lime-950 tracking-widest uppercase">BOOKING ID</span>
+                                    <span class="text-xs font-bold text-moss" x-text="selectedHotel.bookingID"></span>
+                                </div>
+                            </template>
+                            <div class="pt-2 flex flex-wrap gap-2">
+                                <template x-for="a in selectedHotel.amenities" :key="a">
+                                    <span class="px-2 py-0.5 bg-moss/20 rounded-full text-[0.55rem] font-black text-stone-700 uppercase tracking-tighter" x-text="a"></span>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                    <template x-if="!isHotel && selectedItem?.details">
+                        <div class="space-y-1.5">
+                            <template x-if="selectedItem.bookingId">
+                                <div class="flex justify-between items-center border-b border-moss/10 py-1.5">
+                                    <span class="text-[0.65rem] font-black text-lime-950 uppercase tracking-widest">BOOKING ID</span>
+                                    <span class="text-xs font-bold text-lime-950" x-text="selectedItem.bookingId"></span>
+                                </div>
+                            </template>
+                            <template x-for="(v, k) in selectedItem.details" :key="k">
+                                <div x-show="k !== 'Map'" class="flex justify-between items-center border-b border-moss/10 py-1.5 last:border-0 text-right">
+                                    <span class="text-[0.65rem] font-black text-lime-950 uppercase tracking-widest" x-text="k"></span>
+                                    <span class="text-xs font-bold text-lime-950" x-text="v"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <template x-if="selectedItem?.voucherUrl && selectedItem.voucherUrl !== ''">
+                        <button @click="window.open(selectedItem.voucherUrl)" class="w-full py-2.5 bg-[#f9d976] text-stone-700 rounded-full font-black text-[0.65rem] tracking-widest uppercase flex items-center justify-center gap-2 shadow-sm">
+                            <i data-lucide="file-text" style="width: 14px; height: 14px;"></i>
+                            Voucher (PDF)
+                        </button>
+                    </template>
+                    <div class="flex gap-2">
+                        <button @click="window.open(isHotel ? selectedHotel.mapUrl : (selectedItem?.details?.Map || '#'))" class="flex-1 bg-moss text-white font-black text-[0.65rem] tracking-widest uppercase py-3 rounded-full flex items-center justify-center gap-2 shadow-md shadow-moss/20">
+                            <i data-lucide="map" style="width: 14px; height: 14px;"></i>
+                            Map
+                        </button>
+                        <button @click="closeModal()" class="flex-1 bg-sand text-moss font-black text-[0.65rem] tracking-widest uppercase py-3 rounded-full">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function appData() {
+            return {
+                activeDay: 1,
+                isModalOpen: false,
+                selectedItem: null,
+                selectedHotel: null,
+                isHotel: false,
+                modalImg: '',
+                modalEmoji: '',
+                modalDesc: '',
+                
+                hotels: {
+                    omo: {
+                        name: "OMO 關西機場飯店", emoji: "✈️", dates: "06/03 → 06/04", platform:"JAPANiCAN", address: "大阪府泉佐野市りんくう往來北1-83", phone: "+81 72-458-1122", bookingID: "6190018084", checkin: "15:00", checkout: "11:00",
+                        desc: "星野集團旗下 OMO 品牌，質感極高且位置緊鄰機場。飯店二樓直通臨空城車站，是抵達日本首晚的完美選擇。", amenities: ["24h 前台代收", "大浴場與桑拿", "行李寄存室", "機場接駁巴士", "加濕空氣清淨機"],
+                        img: "https://daydayplay.hk/wp-content/uploads/2022/09/osaka_omo_kix-2.jpg", mapUrl: "https://maps.app.goo.gl/wrrEJFjyjPYWus9b7"
+                    },
+                    koko: {
+                        name: "KOKO Hotel 京都", emoji: "🏯", dates: "06/04 → 06/08", address: "京都市下京區烏丸通四條下る", phone: "+81 75-279-0202", bookingID: "KH-KYT-9808", checkin: "15:00", checkout: "11:00",
+                        desc: "位於京都車站與四條烏丸交界，散發著和風現代感。周邊有百貨公司與便利商店，生活機能無懈可擊。", amenities: ["自助行李寄存", "全室加濕清淨機", "2F 咖啡休憩區", "多款枕頭租借"],
+                        img: "https://pix10.agoda.net/hotelImages/10565359/0/6854527543c769e49b62a799cab25564.jpg?ce=3&s=414x232", mapUrl: "https://maps.app.goo.gl/h1tmhoW2vf9zXh679"
+                    },
+                    basement: {
+                        name: "The Basement 大阪", emoji: "🌃", dates: "06/08 → 06/10", platform:"Agoda",address: "大阪市中央區本町",phone: "+81 6-6210-2720", bookingID: "1712109359", checkin: "15:00", checkout: "11:00",
+                        desc: "王子飯店集團旗下的設計概念飯店，結合智慧科技與簡約美學。入住即享免費輕食早餐。", amenities: ["自動報到系統", "免費輕食組合", "自助儲物空間", "24h 洗衣房"],
+                        img: "https://thebasementhotel.jp/osakahonmachi/assets/images/about/img_intro03.webp", mapUrl: "https://maps.app.goo.gl/EJDDURu4dcGsbMEr5"
+                    }
+                },
+
+                placeInfo: {
+                    "桃園 → 關西機場": { img: "https://hips.hearstapps.com/hmg-prod/images/tigerair-taiwan-295717542-469167378369389-3137216213443856898-n-649e6871e7c7f.jpg", desc: "桃園國際機場出發，開始這場魔法之旅。建議提前 2 小時抵達櫃檯報到。" },
+                    "天橋立一日遊": { img: "https://res.klook.com/images/fl_lossy.progressive,q_65/c_fill,w_1200,h_630/w_80,x_15,y_15,g_south_west,l_Klook_water_br_trans_yhcmh3/activities/vg0fwagyu3qa1k1z0m5l/%E5%A4%A7%E9%98%AA%E5%87%BA%E7%99%BC%E7%9A%84%E5%A4%A9%E6%A9%8B%E7%AB%8B%E3%80%81%E5%82%98%E6%9D%BE%E5%85%AC%E5%9C%92%E5%92%8C%E4%BC%8A%E6%A0%B9%E8%88%B9%E5%B1%8B%E5%8F%83%E5%8A%A0%E4%B8%80%E6%97%A5%E5%B7%B4%E5%A3%AB%E9%81%8A-Klook%E5%AE%A2%E8%B7%AF.jpg", desc: "日本三景之一，長達 3.6km 的沙洲松林橫跨阿蘇海。最有名的是「股のぞき」，即彎下腰從跨下往後看，沙洲如雲中橋梁。" },
+                    "SAMGHA": { img: "https://i.autoreserve.com/thumb/1200x1200/restaurant_image/image/058/752/431/58752431/80a813d3-b755-429a-8670-cf9d175e90b9(2).jpg?format=webp", desc: "京都具備神祕氣息的景點，適合放鬆與沈浸於當地的文化氛圍。" },
+                    "日本栗專賣店 Saori": { img: "https://static.japan-food.guide/uploads/restaurant_image/file/000/003/889/eef8f3fcdbc2677b015988015b2b35cbf9171f14def5afb7ec8f3f31820ec321/eye_catch_file.jpg?1721370871", desc: "提供細至1mm的錦糸蒙布朗。精選的食材和講究的製作方法，讓您品嚐到新鮮出爐的美味，感受栗子的原汁原味和醇厚的口感。" },
+                    "東洋亭": { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS57KQyczgC5nWLpsYsY4fB5XIrY8kP9-xyxw&s", desc: "百年洋食漢堡排。" },
+                    "貴船神社": { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcXls8e6xdeC2Vz-b1njnIHYTGORyeYWPPJg&s", desc: "位於京都北部山林間，朱紅燈籠與参道階梯是經典畫面。這裡是著名的繪馬發源地。" },
+                    "貴船茶屋（川床）": { img: "https://static.gltjp.com/glt/data/directory/14000/13169/20220702_124141_0d19c5e5_w1920.webp", desc: "在極具詩意的溪水之上設置的座席（川床），享用精緻懷石料理與清涼微風。" },
+                    "押鳥": { img: "https://static.gltjp.com/glt/data/directory/15000/14971/20231107_185904_48ef8f6f_w1920.webp", desc: "是位於京都洛北貴船的一家著名老字號料理旅館，創立於大正大正10年（1921年），擁有超過百年的歷史。以夏季的「川床料理」和冬季的「牡丹鍋」聞名。" },
+                    "兵衛Cafe": { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtRrADmGQCp2LBI7DfePVcoVNeO9TEj4jHNQ&s", desc: "貴船老舖經營，百元即可體驗溪流川床的親民咖啡廳。" },
+                    "漬野菜餐廳 isoism": { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2W2jCZq8ca7PeX4O_mr1JlWFg-n8pZ04NLw&s", desc: "isoism是一間以京都野菜為主題的餐廳，從自家農園直送鮮脆京都在地野菜，透過傳統的釀漬手法搭配新式的料理方式，希望保留漬物原有的旨味。" },
+                    "TeamLab Biovortex": { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBLU6esGXfml84rAb_sGhmNMOsMN5Zd_tqCg&s", desc: "大阪長居公園的沉浸式藝術展，光與自然的共生體驗。記得檢查電子票券。" },
+                    "Dunstan Coffee Roaster": { img: "https://www.japaholic.com/storage/uploads/2022/07/26//DUNSTAN_COFFEE_ROASTERS_1658826312.jpg", desc: "隱身於京都傳統町家住宅區的自家烘焙咖啡店，在充滿木質溫潤感的和風空間內享受匠人手沖。" },
+                    "Kacto": { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJrRWRJ9r1xCza7deVwb-qaehwZD7YZu96aA&s", desc: "京都具備現代感的精緻餐飲空間。建議提前 10 分鐘抵達以利進場。" },
+                    "金閣寺": { img: "https://static.gltjp.com/glt/data/directory/13000/12632/20220209_054349_470db3d6_w1920.webp", desc: "日本政府指定的國寶。正式名稱為鹿苑寺，足利義滿所建，鏡湖池的倒影美不勝收。" },
+                    "兩足院+花見小路": { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfy3f_ufWyUOjWKP-ylSrVG15CRpeZx9G35g&s", desc: "京都古樸的巷弄與禪宗寺院。兩足院以精美的苔蘚庭院與枯山水景觀聞名。" },
+                    "下鴨神社": { img: "https://i0.wp.com/journey.tw/wp-content/uploads/2025/02/20250225194032_0_10ebb5.jpg?resize=1100%2C730&quality=99&ssl=1", desc: "京都最古老神社之一，隱身於糺之森，以求姻緣與美麗的鏡繪馬聞名。" },
+                    "祇園 鰻 川藤": { img: "https://tblg.k-img.com/resize/640x360c/restaurant/images/Rvw/285722/44ceacce72244d5a917f26680b67e334.jpg?token=d781f1c&api=v2", desc: "位於祇園花街的鰻魚名店，在充滿町家風情的和室內享用酥脆炭烤鰻魚飯。" },
+                    "Sabi 然美": { img: "https://www.leafkyoto.net/leaf/wp-content/uploads/2022/05/2200510-sabi-1-1024x682.jpg", desc: "將日本傳統「侘寂」美學融入現代甜點，採完全預約制的極致和風茶寮。" },
+                    "Face House": { img: "https://cdn.ca.emap.com/wp-content/uploads/sites/12/2026/01/face_house_kyoto_japan_kazumasa_yamashita_architectural_review_credit_takeru_koroda_48-1800x1200.webp", desc: "京都著名的趣味現代建築，將住宅外觀做成巨大的人臉，展現獨特的街頭玩味。" },
+                    "新京極商店街": { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTe2us-u_ElmpW8niyhjLJZee_JBtFau-x6BQ&s", desc: "日本歷史第二悠久的商店街，服飾、藥妝與在地小吃林立，充滿昭和復古活力。" },
+                    "新風館": { img: "https://rimage.gnst.jp/livejapan.com/public/article/detail/a/20/00/a2000529/img/zh-tw/a2000529_parts_5ee89359d3147.jpg?20201202115716&q=80&rw=686&rh=490", desc: "隈研吾大師操刀，將舊京都中央電話局改造成融合紅磚復古與日式木造的時髦地標。" },
+                    "麓壽庵": { img: "https://cdn1.tablecheck.com/menu_items/68ef53799fcc39f69924b384/images/xl/00200009.jpg?1760514938", desc: "京都隱密且高級的餐飲聚落。預約姓名與時間請多加留意。" },
+                    "BEE’S KNEES": { img: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/13/7e/3d/c9/photo0jpg.jpg?w=900&h=500&s=1", desc: "亞洲前50酒吧。" },
+                    "京都 → 金澤": { img: "https://static.gltjp.com/glt/data/article/21000/20204/20250610_063919_07f28943_w1920.webp", desc: "搭乘雷鳥號特急 (Thunderbird) 直達北陸的金澤，沿途飽覽琵琶湖美景。" },
+                    "金澤 21 世紀美術館": { img: "https://www.roomie.tw/wp-content/uploads/2025/08/b584c6c8-f5ca-4c7f-9fbe-70c6f101377a-768x461.jpg", desc: "世界級建築設計。著名的《泳池》裝置讓觀者體驗上下翻轉的視覺趣味。" },
+                    "金澤近江町市場": { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBy9z4Mqrkdld7Du6eGCfXzA-XPbEpCSzxJQ&s", desc: "擁有三百年歷史的「金澤市民廚房」，匯集加賀蔬菜與北陸滿滿的現撈極鮮海產。" },
+                    "Le Musée de H 金澤百番街店": { img: "https://pipichocho.com/wp-content/uploads/2025/10/Le-Musee-de-H-%E9%87%91%E6%BE%A4%E5%BA%97-%E5%85%A7%E7%94%A8%E7%92%B0%E5%A2%83%E9%9D%9E%E5%B8%B8%E6%BC%82%E4%BA%AE%EF%BC%8C%E5%A4%A7%E7%89%87%E7%8E%BB%E7%92%83%E7%AA%97%E6%99%AF-1024x683.jpg", desc: "世界級甜點大師辻口博啟開設，將能登在地食材與和風美學完美融合的精緻法式甜點店。" },
+                    "東屋茶街": { img: "https://dimg04.c-ctrip.com/images/0106a12000imdqeaf16AD_R_750_370.jpg_.webp?proc=namelogo/d_5", desc: "金澤最具代表性的古街，兩側盡是江戶時代木造格子窗茶屋，散發濃郁的極致大和古韻。" },
+                    "大関": { img: "https://static.gltjp.com/glt/data/directory/14000/13568/20220901_083229_c465d40f_w640.webp", desc: "金澤老字號關東煮名店，在溫暖的和風暖簾下，品嚐吸飽金澤高湯的車麩與在地時令名產。" },
+                    "兼六園": { img: "https://static.gltjp.com/glt/data/article/11000/10324/20171022_092428_4ed9d3c5_w1920.webp", desc: "與偕樂園、後樂園並稱日本三大名園。江戶時代大名林泉回遊式庭園的巔峰。" },
+                    "Ito Okashi": { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQly6QuGOn1QF_NwT3maLNYAW0goXyalrlqRQ&s", desc: "以極致可愛的創意甜點聞名，將傳統和菓子元素與現代造型結合的療癒系午茶。" },
+                    "京都 → 大阪":{img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7AIrWJD9G8BI21uI4F-1AOvBH_a4QKf3ufg&s", desc: "熱情活潑的水都，匯聚浮誇招牌、美食與環球影城，關西文化的魅力核心。" },
+                    "萬博紀念公園": { img: "https://d1grca2t3zpuug.cloudfront.net/2025/01/6781302a7b8bd-869x500.webp", desc: "1970年萬博會場遺址，以岡本太郎設計的「太陽之塔」為地標，擁有廣大自然與文化設施。" },
+                    "Masahiko Ozumi Paris": { img: "https://assets.hldycdn.com/cdn-cgi/image/format=webp,quality=75,width=600/cd055164-4331-4916-87b4-71c382593d29.jpeg", desc: "以超高難度「編織毛線球」外觀蛋糕聞名的法式甜點店，口感與視覺皆是藝術級享受。" },
+                    "梅田百貨": { img: "https://static.gltjp.com/glt/data/directory/12000/11799/20210805_155717_e2d3b12f_w1920.webp", desc: "大阪北區核心商圈，匯集阪急、阪神及大丸等頂級百貨，是時尚潮流與美食的交匯點。" },
+                    "心齋橋": { img: "https://static.gltjp.com/glt/data/article/21000/20754/20240726_160915_1d138071_w1920.webp", desc: "大阪最具代表性的購物街，有著著名的跑跑人看板，從平價服飾到在地藥妝應有盡有。" },
+                    "柴長清酒 本店": { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTClolMHrPO8Z4E1aNDt8UvvMWTlw_rJGkUvg&s", desc: "創業百年的老字號酒鋪，不僅能買到各式地酒，還能感受充滿歷史厚度與職人精神的空間。" },
+                    "JUMP SHOP": { img: "https://image.parco.jp/SCCWEB/image/shibuya/store/storage/w1580xh1020/shop_cname_20200725095305.jpg", desc: "《週刊少年Jump》官方商店，集結《航海王》、《咒術迴戰》等高人氣動漫的周邊天堂。" },
+                    "CENE OSAKA | ルクア大阪店": { img: "https://cdn.readytofashion.jp/uploads/recruitment/thumb_f58deb6130.jpg", desc: "主打簡約設計與防過敏材質的質感首飾店，位於時髦的LUCUA大阪，深受女性喜愛。" },
+                    "大阪城": { img: "https://resources.matcha-jp.com/resize/480x2000/2023/03/28-136336.webp", desc: "豐臣秀吉時期所建，雖經多次戰火重建，其宏大的天守閣仍是大阪的象徵。" },
+                    "SUKIYAKI FUJIMOTO": { img: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2c/af/ea/02/120-1-700-120-4-300-120.jpg?w=900&h=500&s=1", desc: "大阪著名的壽喜燒老店。頂級 A5 和牛與獨門秘方醬汁的完美融合。" },
+                    "環球影城 USJ": { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlTtmM1q-oXeNT7AZaBfzgRIc2E3w9XGqBgw&s", desc: "體驗哈利波特、任天堂等多個熱門 IP 的沉浸式園區。建議購買快速通關。" },
+                    "中之島美術館": { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnj1zCrKyrmwujH-G1es639qowe3SGUIImkg&s", desc: "2022 年開幕，全黑立方體的極簡建築外型。展示大阪及世界各地的當代藝術。" },
+                    "neel nakazakicho": { img: "https://tasteofkansai.com/wp-content/uploads/2025/09/neelnakazaki05.jpg", desc: "中崎町的質感系獨棟老宅咖啡，以梨子商標與酥脆可麗餅聞名，充滿復古時髦感。" },
+                    "中崎町": { img: "https://static.wixstatic.com/media/d8c572_89bef2ead1d44e779c260148723d41eb~mv2.jpg", desc: "漫步在二戰倖存的昭和時代街廓，巷弄內充滿文創店、咖啡館與復古雜貨。" },
+                    "關西機場 → 桃園": { img: "https://hips.hearstapps.com/hmg-prod/images/tigerair-taiwan-295717542-469167378369389-3137216213443856898-n-649e6871e7c7f.jpg", desc: "結束 8 天的旅程返回台灣。記得檢查行李與護照。" }
+                },
+
+                emergencyContacts: [
+                    { n: "日本警察", num: "110", ico: "🚔", note: "緊急報案" },
+                    { n: "日本救護/火災", num: "119", ico: "🚑", note: "醫療緊急" },
+                    { n: "外交部急難救助", num: "+886-800-085-095", ico: "🇹🇼", note: "24h" },
+                    { n: "台灣交流協會大阪", num: "+81-6-6443-8481", ico: "📋", note: "領事服務" }
+                ],
+
+                days: [
+                    { id: 1, date: "06/03", title: "出發日 ✈️", sub: "深夜起飛", items: [
+                        { type: "transport", time: "23:35", title: "桃園 → 關西機場", icon: "✈️", badge: "交通", notice: "提前2小時到機場", suggestedArrival: "21:30 (T1 櫃檯)", details: { "航班": "GK57", "訂票號碼": "TK1PNI", "出發": "23:35", "抵達": "01:30" ,Map: "https://maps.app.goo.gl/BFEYj1kDUcV94ExZ9"} },
+                        { type: "hotel", time: "深夜", title: "OMO 關西機場飯店", icon: "🏨", badge: "住宿", hotelKey: "omo", details: { "住宿": "06/03-04" } }
+                    ]},
+                    { id: 2, date: "06/04", title: "天橋立 & 入京都", sub: "KKDay 一日遊 · 初抵京都", items: [
+                        { type: "sight", time: "全日", title: "天橋立一日遊", icon: "🌉", badge: "行程", notice: "KKDay 預訂", voucherUrl: "./file/26KK239440156_kkday_voucher.pdf", bookingId: "26KK239440156", details: { "訂單": "26KK239440156", "集合時間": "8:25~8:40" ,"集合地點": "大阪近鐵日本橋2號出口"} },
+                        { type: "hotel", time: "入住", title: "KOKO Hotel 京都", icon: "🏯", badge: "住宿", hotelKey: "koko", details: { "住宿": "06/04-08", "電話": "+81 75-279-0202" } },
+                        { type: "other", time: "晚上", title: "東洋亭", icon: "", badge: "用膳", details: { "地點": "京都伊勢丹店","營業": "10:00–20:00",Map:"https://maps.app.goo.gl/fCk3Skovo5idut4t9" } },
+                        { type: "other", time: "晚上", title: "日本栗專賣店 Saori", icon: "", badge: "用膳", details: { "營業": "11:00–22:00",Map:"https://maps.app.goo.gl/W6LcW6rUW8udrztp7" } },
+                        { type: "other", time: "晚上", title: "SAMGHA", icon: "☯️", badge: "用膳", details: { "地點": "四條 烏丸","營業": "17:00–00:00",Map:"https://maps.app.goo.gl/9SYfWsbsJKWb9Y5k7" } }
+                    ]},
+                    { id: 3, date: "06/05", title: "貴船 · TeamLab 夜", sub: "貴船神社 · 川床午餐 · TeamLab", items: [
+                        { type: "sight", time: "早上", title: "貴船神社", icon: "⛩️", badge: "行程", details: { "交通": "地鐵" } },
+                        { type: "food", time: "中午", title: "貴船茶屋（川床）", icon: "🍱", badge: "用膳", details: { "特色": "川床料理","營業":"10:30–16:00",Map:"https://maps.app.goo.gl/KUsgaqPzZZ8fV2Sb6" } },
+                        { type: "food", time: "中午", title: "押鳥", icon: "🍱", badge: "用膳", details: { "特色": "川床料理","營業":"11:00–20:00",Map:"https://maps.app.goo.gl/9HLuZBbFFAyooX716" }},
+                        { type: "food", time: "中午", title: "兵衛Cafe", icon: "🍱", badge: "用膳", details: { "注意": "要看IG有沒有營業","營業":"11:00–16:00",Map:"https://maps.app.goo.gl/r8pKauVScYvrVi5N9" }},
+                        { type: "food", time: "中午", title: "漬野菜餐廳 isoism", icon: "🍱", badge: "用膳", details: { "注意": "要看IG有沒有營業","營業":"17:00–23:00",Map:"https://maps.app.goo.gl/6eqT8FPPtTY4GNee6" }},
+                        { type: "special", time: "18:00", title: "TeamLab Biovortex", icon: "🌸", badge: "行程", notice: "入場前一天才有 QR code", voucherUrl: "#", details: { "時段": "18:00–18:30" } },
+                        { type: "food", time: "晚上", title: "BEE’S KNEES", icon: "🍶", badge: "用膳", details: { "訂位": "19:00" } }
+                    ]},
+                    { id: 4, date: "06/06", title: "京都趴趴走", sub: "神社 · 祇園 · 逛街", items: [
+                        { type: "food", time: "早上", title: "Dunstan Coffee Roaster", icon: "🍳", badge: "用膳", details: { "備註": "很近可能可以喝一杯" ,"營業":"9:30-11:30",Map:"https://maps.app.goo.gl/mqYWwMcZDWJnd3Ft7"} },
+                        { type: "food", time: "08:00", title: "Kacto", icon: "🍳", badge: "用膳", details: { "訂位": "08:00",Map:"https://maps.app.goo.gl/K6WqSvmoSesKkBBH7" } },
+                        { type: "sight", time: "早上", title: "金閣寺", icon: "🏯", badge: "行程", details: { "門票": "500日幣" ,"營業": "09:00–17:00",Map:"https://maps.app.goo.gl/KhBiLWMFvZKAbkoq6"} },
+                        { type: "sight", time: "早上", title: "下鴨神社", icon: "🏯", badge: "行程", details: { "營業": "06:00–17:00",Map:"https://maps.app.goo.gl/bvBMBirKnf7ug6Gs5" } },
+                        { type: "food", time: "中午", title: "祇園 鰻 川藤", icon: "🍶", badge: "用膳", notice: "表妹訂位", details: { "訂位": "12:30" ,Map:"https://maps.app.goo.gl/wEaGq8ud3jULCtRZA"} },
+                        { type: "food", time: "下午", title: "Sabi 然美", icon: "🍶", badge: "用膳", notice: "只有趙珮", details: { "訂位": "13:50開放入場，現場付費",Map:"https://maps.app.goo.gl/CEpT5iLMHt2eaSfq6" } },
+                        { type: "sight", time: "下午", title: "兩足院+花見小路", icon: "🌿", badge: "行程", details: { "交通": "地鐵" ,Map:"https://maps.app.goo.gl/egDWw9rTFikqkhJS8"} },
+                        { type: "sight", time: "下午", title: "Face House", icon: "🌿", badge: "行程", details: { "交通": "地鐵" ,Map:"https://maps.app.goo.gl/Rbwc1sjUnrDrASde8"} },
+                        { type: "sight", time: "下午", title: "新京極商店街", icon: "🌿", badge: "行程", details: { "備註": "可以去uru coffee" ,Map:"https://maps.app.goo.gl/FWPuv1PVM3Z8Wxxe7"} },
+                        { type: "sight", time: "下午", title: "新風館", icon: "🌿", badge: "行程", details: { "交通": "地鐵",Map:"https://maps.app.goo.gl/DyYNhSmhZjXgCG8x5" } },
+                        { type: "food", time: "19:00", title: "麓壽庵", icon: "🍶", badge: "用膳", notice: "Chao Peiyu 訂位", details: { "訂位": "19:00",Map:"https://maps.app.goo.gl/BReZwJ9mcjFVygob7" } }
+                    ]},
+                    { id: 5, date: "06/07", title: "金澤一日遊", sub: "美術館 · 兼六園 · 近江町市場", items: [
+                        { type: "transport", time: "早上", title: "京都 → 金澤", icon: "🚄", badge: "交通", details: { "交通": "四條→京都車站 (烏丸) → 敦賀(JR雷鳥9特急)→ 金澤 (北路新幹線)" ,Map:"https://maps.app.goo.gl/yDvnEAXByCf5Kp1L7"} },
+                        { type: "food", time: "中午", title: "金澤近江町市場", icon: "🍶", badge: "用膳", details: { "營業": "09:00–17:00" ,Map:"https://maps.app.goo.gl/NL93cXJnKNYA1xhi6"} },     
+                        { type: "sight", time: "中午", title: "金澤 21 世紀美術館", icon: "🎨", badge: "行程", details: { "營業": "10:00–18:00",Map:"https://maps.app.goo.gl/76hX11rtFnV6H7rG7" } },
+                        { type: "sight", time: "下午", title: "兼六園", icon: "🌳", badge: "行程", details: {"門票": "320日幣" , "營業": "07:00–18:00" ,Map:"https://maps.app.goo.gl/Eb6GFoy25q7YvQyo8"} },
+                        { type: "food", time: "下午", title: "Le Musée de H 金澤百番街店", icon: "🍶", badge: "用膳", details: { "營業": "09:00–17:00",Map:"https://maps.app.goo.gl/Cu71NeuuvvbWDfncA" } },     
+                        { type: "food", time: "下午", title: "東屋茶街", icon: "🍶", badge: "行程", details: { "營業": "10:00–17:00","備註":"可以去一笑、久連波、甘味處 和味、東山莊",Map:"https://maps.app.goo.gl/ABBfhCrjswGuoWMa8" } },     
+                        { type: "food", time: "晚上", title: "大関", icon: "🍶", badge: "用膳", details: { "營業": "16:30-21:30",Map:"https://maps.app.goo.gl/RNk1MwDmUZgADqft8" } },     
+                    ]},
+                    { id: 6, date: "06/08", title: "前往大阪！", sub: "大阪城 · 哥哥壽喜燒", items: [
+                        { type: "food", time: "早上", title: "Ito Okashi", icon: "🍶", badge: "用膳",notice: "趙珮訂位", details: {"預約": ":09:30","預約ID":"6EWKV3", "營業": "07:00-12:30" ,Map:"https://maps.app.goo.gl/NL93cXJnKNYA1xhi6"} },
+                        { type: "transport", time: "早上", title: "京都 → 大阪", icon: "🚄", badge: "交通", details: { "交通": "四條 → 京都車站(烏丸) → 大阪車站(東海道山陽本線）→ 本町(四橋)" ,Map:"https://maps.app.goo.gl/yDvnEAXByCf5Kp1L7"} },
+                        { type: "sight", time: "早上", title: "萬博紀念公園", icon: "🌳", badge: "行程", details: { "分類": "地鐵", Map: "https://maps.app.goo.gl/76hX11rtFnV6H7rG7" } },
+                        { type: "sight", time: "早上", title: "大阪城", icon: "🏯", badge: "行程", details: { "營業": "09:00–18:00" ,Map:"https://maps.app.goo.gl/tKccudHvFKdo2V1D7"} },
+                        { type: "hotel", time: "入住", title: "The Basement", icon: "🌃", badge: "住宿", hotelKey: "basement", details: { "住宿": "06/08-10","備註":"6/10可以吃早餐" } },
+                        { type: "food", time: "下午", title: "Masahiko Ozumi Paris", icon: "🍰", badge: "用膳", details: { "地點": "大阪城附近", "營業": "10:00-19:00", Map: "https://maps.app.goo.gl/KJgLEeMWSKL5zLLJ9" } },
+                        { type: "sight", time: "下午", title: "梅田百貨", icon: "🛍️", badge: "行程", details: { "交通": "地鐵", Map: "https://maps.app.goo.gl/YRZZZcp4wc2tbQzAA" } },
+                        { type: "sight", time: "下午/晚上", title: "心齋橋", icon: "🏙️", badge: "行程", details: { "交通": "地鐵", Map: "https://maps.app.goo.gl/aJjubSYe8Esd5Cys6" } },
+                        { type: "food", time: "下午/晚上", title: "柴長清酒 本店", icon: "🍶", badge: "行程", details: { "地點": "心齋橋", "交通": "地鐵", Map: "https://maps.app.goo.gl/rUWBuK8PU61jVohs6" } },
+                        { type: "shopping", time: "下午/晚上", title: "JUMP SHOP", icon: "🏴‍☠️", badge: "行程", details: { "地點": "梅田/心齋橋", Map: "https://maps.app.goo.gl/mJCEJcYsrtnA2kZV9" } },
+                        { type: "shopping", time: "下午/晚上", title: "CENE OSAKA | ルクア大阪店", icon: "💍", badge: "行程", details: { "地點": "LUCUA Osaka 8F", "備註": "不鏽鋼飾品", Map: "https://maps.app.goo.gl/BHA3dMtS1JLTecNJ8" } },
+                        { type: "food", time: "19:30", title: "SUKIYAKI FUJIMOTO", icon: "🥩", badge: "用膳",notice: "表妹訂位", details: { "訂位": "19:30","預約ID":"AAAA-89EA-5D38-253B",Map:"https://maps.app.goo.gl/DL62UhXx25LuTix87?g_st=ipc" } }
+                    ]},
+                    { id: 7, date: "06/09", title: "環球影城！🎢", sub: "USJ 全日攻略", items: [
+                        { type: "special", time: "全日", title: "環球影城 USJ", icon: "🎢", badge: "行程", notice: "KKDay 預訂", voucherUrl: "", bookingId: "26KK239440156",Map:"https://maps.app.goo.gl/HU96VvouPGzsw6V68"}
+                    ]},
+                    { id: 8, date: "06/10", title: "中之島 · 返台", sub: "中崎町 · 回家", items: [
+                        { type: "sight", time: "早上", title: "中之島美術館", icon: "🎨", badge: "行程", details: { "營業": "10:00–17:00" } },
+                        { type: "sight", time: "中午", title: "中崎町", icon: "🏘️", badge: "行程", details: { "交通": "地鐵" } },
+                        { type: "food", time: "下午", title: "neel nakazakicho", icon: "🍶", badge: "用膳", details: { "營業": "10:00–20:30",Map:"https://maps.app.goo.gl/LAmbjbcR3ivUuqM6A" } },
+                        { type: "transport", time: "18:20", title: "關西機場 → 桃園", icon: "✈️", badge: "交通", details: { "航班": "GK54", "訂票號碼": "HQWQPA", "出發": "18:20", "抵達": "22:00"  } }
+                    ]}
+                ],
+
+                init() {
+                    lucide.createIcons();
+                },
+
+                currentDay() {
+                    return this.days.find(d => d.id === this.activeDay);
+                },
+
+                getItemInfo(item) {
+                    if (item.type === 'hotel') return this.hotels[item.hotelKey] || {};
+                    return this.placeInfo[item.title] || {};
+                },
+
+                openModal(item) {
+                    if (item.type === 'hotel' && this.hotels[item.hotelKey]) {
+                        this.openHotelModal(this.hotels[item.hotelKey]);
+                        return;
+                    }
+                    this.selectedItem = item;
+                    this.isHotel = false;
+                    const info = this.getItemInfo(item);
+                    this.modalImg = info.img || '';
+                    this.modalEmoji = item.icon || '';
+                    this.modalDesc = info.desc || '';
+                    this.isModalOpen = true;
+                    this.$nextTick(() => lucide.createIcons());
+                },
+
+                openHotelModal(hotel) {
+                    this.selectedHotel = hotel;
+                    this.isHotel = true;
+                    // Create a dummy selectedItem to prevent null errors in template
+                    this.selectedItem = { type: 'hotel', title: hotel.name, details: { Map: hotel.mapUrl } };
+                    this.modalImg = hotel.img || '';
+                    this.modalEmoji = hotel.emoji || '';
+                    this.modalDesc = hotel.desc || '';
+                    this.isModalOpen = true;
+                    this.$nextTick(() => lucide.createIcons());
+                },
+
+                closeModal() {
+                    this.isModalOpen = false;
+                    this.selectedItem = null;
+                    this.selectedHotel = null;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
