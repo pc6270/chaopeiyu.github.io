@@ -77,7 +77,7 @@
 <body x-data="appData()" x-init="init()">
 
     <!-- Header -->
-    <header class="sticky top-2 z-[200] mx-3 bg-rice-paper/80 backdrop-blur-md px-4 py-2.5 flex items-center justify-between rounded-full shadow-lg border border-moss/10 sm:top-4 sm:mx-4 sm:px-6 sm:py-3">
+    <header @click="window.scrollTo({ top: 0, behavior: 'smooth' })" class="sticky top-2 z-[200] mx-3 bg-rice-paper/80 backdrop-blur-md px-4 py-2.5 flex items-center justify-between rounded-full shadow-lg border border-moss/10 sm:top-4 sm:mx-4 sm:px-6 sm:py-3 cursor-pointer active:scale-[0.98] transition-transform">
         <div class="logo font-serif font-extrabold text-base flex items-center gap-2 sm:text-lg">
             ✦ <span class="text-moss">魔法師</span>之旅
         </div>
@@ -166,54 +166,109 @@
     </main>
 
     <!-- Footer Lists -->
-    <footer class="mt-16 bg-stone/40 rounded-t-[4rem] py-16">
-        <div class="max-w-3xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 gap-12">
-            <!-- Hotels -->
-            <div>
-                <h3 class="text-sm font-bold uppercase tracking-widest text-moss mb-6 flex items-center gap-3">
-                    <span class="w-2.5 h-2.5 rounded-full bg-terracotta"></span> 🏨 住宿一覽
-                </h3>
-                <div class="space-y-4">
-                    <template x-for="(h, key) in hotels" :key="key">
-                        <div
-                            @click="openHotelModal(h)"
-                            class="p-3 bg-white rounded-2xl shadow-md border border-moss/5 cursor-pointer transition-transform"
-                        >
+    <footer class="mt-16 bg-stone/40 rounded-t-[4rem] py-16 px-6">
+    <div class="max-w-3xl mx-auto space-y-4">
+        <!-- Hotels -->
+        <button @click="openCategoryModal('hotels')" class="w-full bg-white p-6 rounded-[2rem] shadow-lg border border-moss/10 flex items-center justify-between group hover:bg-moss/5 transition-all">
+            <div class="flex items-center gap-4">
+                <div class="text-2xl bg-terracotta/10 w-12 h-12 rounded-full flex items-center justify-center">🏨</div>
+                <div class="text-left">
+                    <div class="text-sm font-bold text-moss tracking-widest uppercase font-serif">住宿資訊</div>
+                    <div class="text-[0.6rem] text-moss/50 font-bold tracking-widest uppercase mt-0.5">Accommodation</div>
+                </div>
+            </div>
+            <div class="text-moss/30 group-hover:translate-x-1 transition-transform"><i data-lucide="chevron-right"></i></div>
+        </button>
+
+        <!-- Shopping -->
+        <button @click="openCategoryModal('shopping')" class="w-full bg-white p-6 rounded-[2rem] shadow-lg border border-moss/10 flex items-center justify-between group hover:bg-moss/5 transition-all">
+            <div class="flex items-center gap-4">
+                <div class="text-2xl bg-blue-50 w-12 h-12 rounded-full flex items-center justify-center">🛍️</div>
+                <div class="text-left">
+                    <div class="text-sm font-bold text-moss tracking-widest uppercase font-serif">購物清單</div>
+                    <div class="text-[0.6rem] text-moss/50 font-bold tracking-widest uppercase mt-0.5">Shopping List</div>
+                </div>
+            </div>
+            <div class="text-moss/30 group-hover:translate-x-1 transition-transform"><i data-lucide="chevron-right"></i></div>
+        </button>
+
+        <!-- Emergency -->
+        <button @click="openCategoryModal('emergency')" class="w-full bg-white p-6 rounded-[2rem] shadow-lg border border-moss/10 flex items-center justify-between group hover:bg-moss/5 transition-all">
+            <div class="flex items-center gap-4">
+                <div class="text-2xl bg-red-50 w-12 h-12 rounded-full flex items-center justify-center">📞</div>
+                <div class="text-left">
+                    <div class="text-sm font-bold text-moss tracking-widest uppercase font-serif">緊急連絡</div>
+                    <div class="text-[0.6rem] text-moss/50 font-bold tracking-widest uppercase mt-0.5">Emergency</div>
+                </div>
+            </div>
+            <div class="text-moss/30 group-hover:translate-x-1 transition-transform"><i data-lucide="chevron-right"></i></div>
+        </button>
+    </div>
+    
+    <div class="mt-12 pt-8 text-center text-[0.65rem] font-bold text-stone-500 tracking-[0.2em] border-t border-moss/10">
+        SUMMER TOUR 2026
+    </div>
+</footer>
+<!-- Category List Modal -->
+<div x-cloak x-show="isListModalOpen" 
+         class="fixed inset-0 z-[500] flex items-center justify-center p-4 bg-moss/60 backdrop-blur-md"
+         @click="isListModalOpen = false">
+        <div class="relative w-full max-w-lg bg-rice-paper rounded-[2.5rem] shadow-2xl p-6 sm:p-8 max-h-[85vh] overflow-hidden flex flex-col" @click.stop>
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-moss font-serif" x-text="categoryTitle"></h2>
+                    <p class="text-[0.6rem] font-black text-moss/50 tracking-[0.2em] uppercase" x-text="categorySub"></p>
+                </div>
+                <button @click="isListModalOpen = false" class="w-10 h-10 bg-sand rounded-full flex items-center justify-center text-moss">
+                    <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                </button>
+            </div>
+
+            <div class="overflow-y-auto no-scrollbar space-y-3 pb-4">
+                <template x-if="activeCategory === 'hotels'">
+                    <template x-for="(h, k) in hotels" :key="k">
+                        <button @click="openHotelModal(h); isListModalOpen = false" class="w-full text-left p-4 bg-white rounded-2xl border border-moss/10 flex items-center gap-4 hover:border-terracotta/30 transition-colors">
+                            <div class="text-2xl w-12 h-12 bg-sand rounded-full flex items-center justify-center" x-text="h.emoji"></div>
+                            <div class="min-w-0">
+                                <div class="font-bold text-moss font-serif" x-text="h.name"></div>
+                                <div class="text-[0.55rem] font-bold text-terracotta tracking-widest uppercase" x-text="h.dates"></div>
+                            </div>
+                        </button>
+                    </template>
+                </template>
+
+                <template x-if="activeCategory === 'shopping'">
+                    <template x-for="s in shoppingItems" :key="s.title">
+                        <button @click="openShoppingModal(s); isListModalOpen = false" class="w-full text-left p-4 bg-white rounded-2xl border border-moss/10 flex items-center justify-between hover:border-terracotta/30 transition-colors">
                             <div class="flex items-center gap-4">
-                                <div class="text-xl w-10 h-10 bg-sand rounded-full flex items-center justify-center shrink-0" x-text="h.emoji"></div>
-                                <div class="min-w-0">
-                                    <div class="font-bold text-xs text-moss font-serif truncate" x-text="h.name"></div>
-                                    <div class="text-[0.55rem] font-bold text-terracotta tracking-widest uppercase" x-text="h.dates"></div>
+                                <div class="text-2xl w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center" x-text="s.icon"></div>
+                                <div>
+                                    <div class="font-bold text-moss font-serif" x-text="s.title"></div>
+                                    <div class="text-[0.55rem] font-bold text-blue-500 tracking-widest uppercase" x-text="s.badge"></div>
                                 </div>
                             </div>
-                        </div>
+                            <i data-lucide="chevron-right" class="text-moss/20" style="width: 14px; height: 14px;"></i>
+                        </button>
                     </template>
-                </div>
-            </div>
+                </template>
 
-            <!-- Emergency -->
-            <div>
-                <h3 class="text-sm font-bold uppercase tracking-widest text-moss mb-6 flex items-center gap-3">
-                    <span class="w-2.5 h-2.5 rounded-full bg-moss/40"></span> 📞 緊急聯絡
-                </h3>
-                <div class="space-y-3">
+                <template x-if="activeCategory === 'emergency'">
                     <template x-for="c in emergencyContacts" :key="c.n">
-                        <div class="flex items-center justify-between p-4 bg-white/60 rounded-[1.5rem] border border-moss/5 hover:bg-white transition-colors">
-                            <div class="flex items-center gap-3">
-                                <div class="text-xl" x-text="c.ico"></div>
-                                <div class="text-[0.8rem] font-bold text-moss" x-text="c.n"></div>
+                        <button @click="openEmergencyModal(c); isListModalOpen = false" class="w-full text-left p-4 bg-white rounded-2xl border border-moss/10 flex items-center justify-between hover:border-terracotta/30 transition-colors">
+                            <div class="flex items-center gap-4">
+                                <div class="text-2xl w-12 h-12 bg-red-50 rounded-full flex items-center justify-center" x-text="c.ico"></div>
+                                <div>
+                                    <div class="font-bold text-moss font-serif" x-text="c.n"></div>
+                                    <div class="text-[0.7rem] font-black font-serif text-terracotta" x-text="c.num"></div>
+                                </div>
                             </div>
-                            <div class="text-[0.8rem] text-terracotta font-black font-serif" x-text="c.num"></div>
-                        </div>
+                            <i data-lucide="chevron-right" class="text-moss/20" style="width: 14px; height: 14px;"></i>
+                        </button>
                     </template>
-                </div>
+                </template>
             </div>
         </div>
-        <div class="mt-12 pt-8 text-center text-[0.65rem] font-bold text-stone-500 tracking-[0.2em] border-t border-moss/10">
-            SUMMER TOUR 2026
-        </div>
-    </footer>
-
+    </div>
     <!-- Modal -->
     <div x-cloak x-show="isModalOpen" 
          class="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-moss/80 backdrop-blur-xl"
@@ -261,8 +316,9 @@
                     <template x-if="isHotel"><span x-text="selectedHotel?.emoji || ''"></span></template>
                     <template x-if="!isHotel"><span x-text="selectedItem?.time || ''"></span></template>
                 </div>
-                <h2 class="text-2xl font-extrabold mb-3 text-moss font-serif leading-tight" x-text="isHotel ? (selectedHotel?.name || '') : (selectedItem?.title || '')"></h2>
-                
+                <!-- <h2 class="text-2xl font-extrabold mb-3 text-moss font-serif leading-tight" x-text="isHotel ? (selectedHotel?.name || '') : (selectedItem?.title || '')"></h2> -->
+                <h2 class="text-2xl font-extrabold mb-3 text-moss font-serif leading-tight"
+                    x-text="isHotel ? (selectedHotel?.name || '') : isEmergency ? (selectedEmergency?.n || '') : isShopping ? (selectedShopping?.title || '') : (selectedItem?.title || '')"></h2>
                 <p class="text-sm text-moss leading-relaxed mb-6 font-medium" x-text="modalDesc"></p>
 
                 <div class="bg-stone/30 p-5 rounded-[1.5rem] mb-6 space-y-2.5">
@@ -300,7 +356,47 @@
                             </div>
                         </div>
                     </template>
-                    <template x-if="!isHotel && selectedItem?.details">
+                    <!-- <template x-if="!isHotel && selectedItem?.details">
+                        <div class="space-y-1.5">
+                            <template x-if="selectedItem.bookingId">
+                                <div class="flex justify-between items-center border-b border-moss/10 py-1.5">
+                                    <span class="text-[0.65rem] font-black text-lime-950 uppercase tracking-widest">BOOKING ID</span>
+                                    <span class="text-xs font-bold text-lime-950" x-text="selectedItem.bookingId"></span>
+                                </div>
+                            </template>
+                            <template x-for="(v, k) in selectedItem.details" :key="k">
+                                <div x-show="k !== 'Map'" class="flex justify-between items-center border-b border-moss/10 py-1.5 last:border-0 text-right">
+                                    <span class="text-[0.65rem] font-black text-lime-950 uppercase tracking-widest" x-text="k"></span>
+                                    <span class="text-xs font-bold text-lime-950" x-text="v"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </template> -->
+                    <template x-if="isEmergency && selectedEmergency">
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between items-center border-b border-moss/10 py-1.5">
+                                <span class="text-[0.65rem] font-black text-lime-950 tracking-widest uppercase">電話號碼</span>
+                                <span class="text-xs font-bold text-moss" x-text="selectedEmergency.num"></span>
+                            </div>
+                            <div class="flex justify-between items-center py-1.5">
+                                <span class="text-[0.65rem] font-black text-lime-950 tracking-widest uppercase">說明</span>
+                                <span class="text-xs font-bold text-moss" x-text="selectedEmergency.note"></span>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template x-if="isShopping && selectedShopping">
+                        <div class="space-y-1.5">
+                            <template x-for="(v, k) in selectedShopping.details" :key="k">
+                                <div class="flex justify-between items-center border-b border-moss/10 py-1.5 last:border-0">
+                                    <span class="text-[0.65rem] font-black text-lime-950 uppercase tracking-widest" x-text="k"></span>
+                                    <span class="text-xs font-bold text-moss text-right ml-4" x-text="v"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <template x-if="!isHotel && !isEmergency && !isShopping && selectedItem?.details">
                         <div class="space-y-1.5">
                             <template x-if="selectedItem.bookingId">
                                 <div class="flex justify-between items-center border-b border-moss/10 py-1.5">
@@ -325,15 +421,33 @@
                             Voucher (PDF)
                         </button>
                     </template>
+                    <!-- <template x-if="fromCategory">
+                        <button @click="backToList()" class="w-full py-2.5 bg-sand text-moss rounded-full font-black text-[0.65rem] tracking-widest uppercase flex items-center justify-center gap-2">
+                            <i data-lucide="arrow-left" style="width: 14px; height: 14px;"></i>
+                            返回列表
+                        </button>
+                    </template> -->
+                    
                     <div class="flex gap-2">
-                        <button @click="window.open(isHotel ? selectedHotel.mapUrl : (selectedItem?.details?.Map || '#'))" class="flex-1 bg-moss text-white font-black text-[0.65rem] tracking-widest uppercase py-3 rounded-full flex items-center justify-center gap-2 shadow-md shadow-moss/20">
-                            <i data-lucide="map" style="width: 14px; height: 14px;"></i>
-                            Map
-                        </button>
-                        <button @click="closeModal()" class="flex-1 bg-sand text-moss font-black text-[0.65rem] tracking-widest uppercase py-3 rounded-full">
-                            Close
-                        </button>
+                        <template x-if="isHotel ? selectedHotel?.mapUrl : (selectedShopping?.mapUrl || selectedItem?.details?.Map)">
+                            <button @click="window.open(isHotel ? selectedHotel.mapUrl : (selectedShopping?.mapUrl || selectedItem?.details?.Map))" class="flex-1 bg-moss text-white font-black text-[0.65rem] tracking-widest uppercase py-3 rounded-full flex items-center justify-center gap-2 shadow-md shadow-moss/20">
+                                <i data-lucide="map" style="width: 14px; height: 14px;"></i>
+                                Map
+                            </button>
+                        </template>
+                         <!-- Header Actions -->
+                        <div class="absolute top-6 left-6 right-6 z-10 flex items-center justify-between">
+                            <button x-show="fromCategory" @click="backToList()" class="w-10 h-10 bg-rice-paper/80 hover:bg-white/60 backdrop-blur-md rounded-full flex items-center justify-center text-moss transition-colors shadow-sm">
+                                <i data-lucide="arrow-left" style="width: 20px; height: 20px;"></i>
+                            </button>
+                            <div x-show="!fromCategory"></div>
+                            <button @click="closeModal()" class="w-10 h-10 bg-rice-paper/80 hover:bg-white/60 backdrop-blur-md rounded-full flex items-center justify-center text-moss transition-colors shadow-sm">
+                                <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                            </button>
+                        </div>
+                    
                     </div>
+                
                 </div>
             </div>
         </div>
@@ -344,13 +458,38 @@
             return {
                 activeDay: 1,
                 isModalOpen: false,
+                isListModalOpen: false,
+                activeCategory: null,
+                fromCategory: null,
+                categoryTitle: '',
+                categorySub: '',
+                
                 selectedItem: null,
                 selectedHotel: null,
+                selectedEmergency: null,
+                selectedShopping: null,
+                
                 isHotel: false,
+                isEmergency: false,
+                isShopping: false,
+                
                 modalImg: '',
                 modalEmoji: '',
                 modalDesc: '',
-                
+                 shoppingItems: [
+                    { title: "Archi Coffee",icon: "☕", badge: "吃吃喝喝", details: { "購物戰士": "趙珮", "營業時間": "8:00-22:00" }, desc: "精選烘焙咖啡店。", mapUrl:"https://maps.app.goo.gl/aFeHsN7FJ3YMKBdU6"},
+                    { title: "ツバメヤ黄金蕨餅", icon: "🍮", badge: "伴手禮", details: { "購物戰士": "趙珮" }, desc: "金黃色的蕨餅，口感Ｑ彈細緻。" },
+                    { title: "HOHO HOJICHA 焙茶專門店", icon: "🍵", badge: "伴手禮", details: { "購物戰士": "表妹", "營業時間": "8:30-20:00" }, mapUrl: "https://maps.app.goo.gl/dr5cQ5KxFWNj4YBT9?g_st=ipc", desc: "焙茶風味甜點與茶飲專門店。" },
+                    { title: "神戶布丁", icon: "🍮", badge: "伴手禮", details: { "購物戰士": "表妹", "地點": "關西機場 1 航 19 登機門附近", "備註": "可常溫帶回，放托運" }, desc: "神戶必買經典布丁。" },
+                    { title: "Letao 紅茶巧克力餅乾", icon: "🍪", badge: "伴手禮", details: { "購物戰士": "表妹" }, desc: "北海道 Letao 名產，紅茶清香與巧克力完美結合。" }
+                ],
+
+                emergencyContacts: [
+                    { n: "日本警察", num: "110", ico: "🚔", note: "緊急報案" },
+                    { n: "日本救護/火災", num: "119", ico: "🚑", note: "醫療緊急" },
+                    { n: "外交部急難救助", num: "+886-800-085-095", ico: "🇹🇼", note: "24h 全球免付費或撥打當地費率號碼。" },
+                    { n: "台灣交流協會大阪", num: "+81-6-6443-8481", ico: "📋", note: "領事服務及國人急難救助。" }
+                ],
                 hotels: {
                     omo: {
                         name: "OMO 關西機場飯店", emoji: "✈️", dates: "06/03 → 06/04", platform:"JAPANiCAN", address: "大阪府泉佐野市りんくう往來北1-83", phone: "+81 72-458-1122", bookingID: "6190018084", checkin: "15:00", checkout: "11:00",
@@ -415,15 +554,9 @@
                     "中之島美術館": { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnj1zCrKyrmwujH-G1es639qowe3SGUIImkg&s", desc: "2022 年開幕，全黑立方體的極簡建築外型。展示大阪及世界各地的當代藝術。" },
                     "neel nakazakicho": { img: "https://tasteofkansai.com/wp-content/uploads/2025/09/neelnakazaki05.jpg", desc: "中崎町的質感系獨棟老宅咖啡，以梨子商標與酥脆可麗餅聞名，充滿復古時髦感。" },
                     "中崎町": { img: "https://static.wixstatic.com/media/d8c572_89bef2ead1d44e779c260148723d41eb~mv2.jpg", desc: "漫步在二戰倖存的昭和時代街廓，巷弄內充滿文創店、咖啡館與復古雜貨。" },
-                    "關西機場 → 桃園": { img: "https://hips.hearstapps.com/hmg-prod/images/tigerair-taiwan-295717542-469167378369389-3137216213443856898-n-649e6871e7c7f.jpg", desc: "結束 8 天的旅程返回台灣。記得檢查行李與護照。" }
+                    "關西機場 → 桃園": { img: "https://hips.hearstapps.com/hmg-prod/images/tigerair-taiwan-295717542-469167378369389-3137216213443856898-n-649e6871e7c7f.jpg", desc: "結束 8 天的旅程返回台灣。記得檢查行李與護照。" },
+                    "Archi Coffee": { img:"https://img.vocus.cc/KuvmEJnryh5HmE-8iCotv8ZYu5_VMMNV9GC73JNexKo/w:1200/f:webp/plain/https://images.vocus.cc/5d615e4e-8993-4a51-ab90-b2d0b7f96fcd.jpg" }
                 },
-
-                emergencyContacts: [
-                    { n: "日本警察", num: "110", ico: "🚔", note: "緊急報案" },
-                    { n: "日本救護/火災", num: "119", ico: "🚑", note: "醫療緊急" },
-                    { n: "外交部急難救助", num: "+886-800-085-095", ico: "🇹🇼", note: "24h" },
-                    { n: "台灣交流協會大阪", num: "+81-6-6443-8481", ico: "📋", note: "領事服務" }
-                ],
 
                 days: [
                     { id: 1, date: "06/03", title: "出發日 ✈️", sub: "深夜起飛", items: [
@@ -503,10 +636,19 @@
 
                 getItemInfo(item) {
                     if (item.type === 'hotel') return this.hotels[item.hotelKey] || {};
+                    
                     return this.placeInfo[item.title] || {};
+                },
+                 resetFlags() {
+                    this.isHotel = false;
+                    this.isEmergency = false;
+                    this.isShopping = false;
+                    this.modalImg = '';
+                    this.fromCategory = null;
                 },
 
                 openModal(item) {
+                    this.resetFlags();
                     if (item.type === 'hotel' && this.hotels[item.hotelKey]) {
                         this.openHotelModal(this.hotels[item.hotelKey]);
                         return;
@@ -522,15 +664,63 @@
                 },
 
                 openHotelModal(hotel) {
+                    const from = this.activeCategory;
+                    this.resetFlags();
+                    if (this.isListModalOpen) this.fromCategory = from;
                     this.selectedHotel = hotel;
                     this.isHotel = true;
-                    // Create a dummy selectedItem to prevent null errors in template
                     this.selectedItem = { type: 'hotel', title: hotel.name, details: { Map: hotel.mapUrl } };
                     this.modalImg = hotel.img || '';
                     this.modalEmoji = hotel.emoji || '';
                     this.modalDesc = hotel.desc || '';
                     this.isModalOpen = true;
                     this.$nextTick(() => lucide.createIcons());
+                },
+
+                openEmergencyModal(contact) {
+                    const from = this.activeCategory;
+                    this.resetFlags();
+                    if (this.isListModalOpen) this.fromCategory = from;
+                    this.selectedEmergency = contact;
+                    this.isEmergency = true;
+                    this.modalEmoji = contact.ico || '📞';
+                    this.modalDesc = "緊急連絡資訊";
+                    this.isModalOpen = true;
+                    this.$nextTick(() => lucide.createIcons());
+                },
+
+                openShoppingModal(item) {
+                    const from = this.activeCategory;
+                    this.resetFlags();
+                    if (this.isListModalOpen) this.fromCategory = from;
+                    this.selectedShopping = item;
+                    this.isShopping = true;
+                    this.modalEmoji = item.icon || '🛍️';
+                    this.modalDesc = item.desc || "購物清單項目";
+                    this.isModalOpen = true;
+                    this.$nextTick(() => lucide.createIcons());
+                },
+
+                openCategoryModal(category) {
+                    this.activeCategory = category;
+                    if (category === 'hotels') {
+                        this.categoryTitle = '住宿一覽';
+                        this.categorySub = 'Accommodation';
+                    } else if (category === 'shopping') {
+                        this.categoryTitle = '購物清單';
+                        this.categorySub = 'Shopping List';
+                    } else if (category === 'emergency') {
+                        this.categoryTitle = '緊急連絡';
+                        this.categorySub = 'Emergency Contacts';
+                    }
+                    this.isListModalOpen = true;
+                    this.$nextTick(() => lucide.createIcons());
+                },
+
+                backToList() {
+                    const cat = this.fromCategory;
+                    this.closeModal();
+                    if (cat) this.openCategoryModal(cat);
                 },
 
                 closeModal() {
