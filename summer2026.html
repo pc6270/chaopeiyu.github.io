@@ -317,13 +317,16 @@
                     </div>
                 </template>
 
-                <div class="text-[0.6rem] font-black text-moss mb-1 tracking-[0.2em] uppercase">
-                    <template x-if="isHotel"><span>Accommodation</span></template>
-                    <template x-if="!isHotel"><span x-text="selectedItem?.type || ''"></span></template>
-                     
-                    <template x-if="isHotel"><span x-text="selectedHotel?.emoji || ''"></span></template>
-                    <template x-if="!isHotel"><span x-text="selectedItem?.time || ''"></span></template>
-                </div>
+                <div class="text-[0.6rem] font-black text-terracotta mb-2 tracking-[0.2em] uppercase flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full" :class="isShopping ? 'bg-blue-400' : (isEmergency ? 'bg-red-400' : 'bg-terracotta')"></span>
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-moss/60" x-text="modalCategorySub"></span>
+                            <span class="opacity-30">•</span>
+                            <span x-text="modalCategoryTitle"></span>
+                        </div>
+                        <span class="opacity-30">•</span>
+                        <span x-text="modalEmoji"></span>
+                    </div>
                 <!-- <h2 class="text-2xl font-extrabold mb-3 text-moss font-serif leading-tight" x-text="isHotel ? (selectedHotel?.name || '') : (selectedItem?.title || '')"></h2> -->
                 <h2 class="text-2xl font-extrabold mb-3 text-moss font-serif leading-tight"
                     x-text="isHotel ? (selectedHotel?.name || '') : isEmergency ? (selectedEmergency?.n || '') : isShopping ? (selectedShopping?.title || '') : (selectedItem?.title || '')"></h2>
@@ -491,6 +494,8 @@
                 modalImg: '',
                 modalEmoji: '',
                 modalDesc: '',
+                modalCategoryTitle: '',
+                modalCategorySub: '',
                  shoppingItems: [
                     { title: "Archi Coffee",icon: "☕", badge: "吃吃喝喝", details: { "購物戰士": "趙珮", "營業時間": "8:00-22:00" }, desc: "精選烘焙咖啡店。", mapUrl:"https://maps.app.goo.gl/aFeHsN7FJ3YMKBdU6"},
                     { title: "ツバメヤ黄金蕨餅", icon: "🍮", badge: "伴手禮", details: { "購物戰士": "趙珮" }, desc: "金黃色的蕨餅，口感Ｑ彈細緻。" },
@@ -580,44 +585,44 @@
                     ]},
                     { id: 2, date: "06/04", title: "天橋立 & 入京都", sub: "KKDay 一日遊 · 初抵京都", items: [
                         { type: "sight", time: "全日", title: "天橋立一日遊", icon: "🌉", badge: "行程", notice: "KKDay 預訂", voucherUrl: "./file/26KK239440156_kkday_voucher.pdf", bookingId: "26KK239440156", details: { "訂單": "26KK239440156", "集合時間": "8:25~8:40" ,"集合地點": "大阪近鐵日本橋2號出口"} },
-                        { type: "hotel", time: "入住", title: "KOKO Hotel 京都", icon: "🏯", badge: "住宿", hotelKey: "koko", details: { "住宿": "06/04-08", "電話": "+81 75-279-0202" } },
-                        { type: "other", time: "晚上", title: "東洋亭", icon: "", badge: "用膳", details: { "地點": "京都伊勢丹店","營業": "10:00–20:00",Map:"https://maps.app.goo.gl/fCk3Skovo5idut4t9" } },
-                        { type: "other", time: "晚上", title: "日本栗專賣店 Saori", icon: "", badge: "用膳", details: { "營業": "11:00–22:00",Map:"https://maps.app.goo.gl/W6LcW6rUW8udrztp7" } },
+                        { type: "hotel", time: "入住", title: "KOKO Hotel 京都", icon: "🏨", badge: "住宿", hotelKey: "koko", details: { "住宿": "06/04-08", "電話": "+81 75-279-0202" } },
+                        { type: "other", time: "晚上", title: "東洋亭", icon: "🍔", badge: "用膳", details: { "地點": "京都伊勢丹店","營業": "10:00–20:00",Map:"https://maps.app.goo.gl/fCk3Skovo5idut4t9" } },
+                        { type: "other", time: "晚上", title: "日本栗專賣店 Saori", icon: "🌰", badge: "用膳", details: { "營業": "11:00–22:00",Map:"https://maps.app.goo.gl/W6LcW6rUW8udrztp7" } },
                         { type: "other", time: "晚上", title: "SAMGHA", icon: "☯️", badge: "用膳", details: { "地點": "四條 烏丸","營業": "17:00–00:00",Map:"https://maps.app.goo.gl/9SYfWsbsJKWb9Y5k7" } }
                     ]},
                     { id: 3, date: "06/05", title: "貴船 · TeamLab 夜", sub: "貴船神社 · 川床午餐 · TeamLab", items: [
                         { type: "sight", time: "早上", title: "貴船神社", icon: "⛩️", badge: "行程", details: { "交通": "地鐵" } },
                         { type: "food", time: "中午", title: "貴船茶屋（川床）", icon: "🍱", badge: "用膳", details: { "特色": "川床料理","營業":"10:30–16:00",Map:"https://maps.app.goo.gl/KUsgaqPzZZ8fV2Sb6" } },
                         { type: "food", time: "中午", title: "押鳥", icon: "🍱", badge: "用膳", details: { "特色": "川床料理","營業":"11:00–20:00",Map:"https://maps.app.goo.gl/9HLuZBbFFAyooX716" }},
-                        { type: "food", time: "中午", title: "兵衛Cafe", icon: "🍱", badge: "用膳", details: { "注意": "要看IG有沒有營業","營業":"11:00–16:00",Map:"https://maps.app.goo.gl/r8pKauVScYvrVi5N9" }},
+                        { type: "food", time: "中午", title: "兵衛Cafe", icon: "🍵", badge: "用膳", details: { "注意": "要看IG有沒有營業","營業":"11:00–16:00",Map:"https://maps.app.goo.gl/r8pKauVScYvrVi5N9" }},
                         { type: "food", time: "中午", title: "漬野菜餐廳 isoism", icon: "🍱", badge: "用膳", details: { "注意": "要看IG有沒有營業","營業":"17:00–23:00",Map:"https://maps.app.goo.gl/6eqT8FPPtTY4GNee6" }},
                         { type: "special", time: "18:00", title: "TeamLab Biovortex", icon: "🌸", badge: "行程", notice: "入場前一天才有 QR code", voucherUrl: "#", details: { "時段": "18:00–18:30" } },
                         { type: "food", time: "晚上", title: "BEE’S KNEES", icon: "🍶", badge: "用膳", details: { "訂位": "19:00" } }
                     ]},
                     { id: 4, date: "06/06", title: "京都趴趴走", sub: "神社 · 祇園 · 逛街", items: [
-                        { type: "food", time: "早上", title: "Dunstan Coffee Roaster", icon: "🍳", badge: "用膳", details: { "備註": "很近可能可以喝一杯" ,"營業":"9:30-11:30",Map:"https://maps.app.goo.gl/mqYWwMcZDWJnd3Ft7"} },
+                        { type: "food", time: "早上", title: "Dunstan Coffee Roaster", icon: "☕", badge: "用膳", details: { "備註": "很近可能可以喝一杯" ,"營業":"9:30-11:30",Map:"https://maps.app.goo.gl/mqYWwMcZDWJnd3Ft7"} },
                         { type: "food", time: "08:00", title: "Kacto", icon: "🍳", badge: "用膳", details: { "訂位": "08:00",Map:"https://maps.app.goo.gl/K6WqSvmoSesKkBBH7" } },
-                        { type: "sight", time: "早上", title: "金閣寺", icon: "🏯", badge: "行程", details: { "門票": "500日幣" ,"營業": "09:00–17:00",Map:"https://maps.app.goo.gl/KhBiLWMFvZKAbkoq6"} },
-                        { type: "sight", time: "早上", title: "下鴨神社", icon: "🏯", badge: "行程", details: { "營業": "06:00–17:00",Map:"https://maps.app.goo.gl/bvBMBirKnf7ug6Gs5" } },
-                        { type: "food", time: "中午", title: "祇園 鰻 川藤", icon: "🍶", badge: "用膳", notice: "表妹訂位", details: { "訂位": "12:30" ,Map:"https://maps.app.goo.gl/wEaGq8ud3jULCtRZA"} },
-                        { type: "food", time: "下午", title: "Sabi 然美", icon: "🍶", badge: "用膳", notice: "只有趙珮", details: { "訂位": "13:50開放入場，現場付費",Map:"https://maps.app.goo.gl/CEpT5iLMHt2eaSfq6" } },
+                        { type: "sight", time: "早上", title: "金閣寺", icon: "⛩️", badge: "行程", details: { "門票": "500日幣" ,"營業": "09:00–17:00",Map:"https://maps.app.goo.gl/KhBiLWMFvZKAbkoq6"} },
+                        { type: "sight", time: "早上", title: "下鴨神社", icon: "⛩️", badge: "行程", details: { "營業": "06:00–17:00",Map:"https://maps.app.goo.gl/bvBMBirKnf7ug6Gs5" } },
+                        { type: "food", time: "中午", title: "祇園 鰻 川藤", icon: "🐟", badge: "用膳", notice: "表妹訂位", details: { "訂位": "12:30" ,Map:"https://maps.app.goo.gl/wEaGq8ud3jULCtRZA"} },
+                        { type: "food", time: "下午", title: "Sabi 然美", icon: "🍵", badge: "用膳", notice: "只有趙珮", details: { "訂位": "13:50開放入場，現場付費",Map:"https://maps.app.goo.gl/CEpT5iLMHt2eaSfq6" } },
                         { type: "sight", time: "下午", title: "兩足院+花見小路", icon: "🌿", badge: "行程", details: { "交通": "地鐵" ,Map:"https://maps.app.goo.gl/egDWw9rTFikqkhJS8"} },
-                        { type: "sight", time: "下午", title: "Face House", icon: "🌿", badge: "行程", details: { "交通": "地鐵" ,Map:"https://maps.app.goo.gl/Rbwc1sjUnrDrASde8"} },
-                        { type: "sight", time: "下午", title: "新京極商店街", icon: "🌿", badge: "行程", details: { "備註": "可以去uru coffee" ,Map:"https://maps.app.goo.gl/FWPuv1PVM3Z8Wxxe7"} },
-                        { type: "sight", time: "下午", title: "新風館", icon: "🌿", badge: "行程", details: { "交通": "地鐵",Map:"https://maps.app.goo.gl/DyYNhSmhZjXgCG8x5" } },
-                        { type: "food", time: "19:00", title: "麓壽庵", icon: "🍶", badge: "用膳", notice: "Chao Peiyu 訂位", details: { "訂位": "19:00",Map:"https://maps.app.goo.gl/BReZwJ9mcjFVygob7" } }
+                        { type: "sight", time: "下午", title: "Face House", icon: "🛍️", badge: "行程", details: { "交通": "地鐵" ,Map:"https://maps.app.goo.gl/Rbwc1sjUnrDrASde8"} },
+                        { type: "sight", time: "下午", title: "新京極商店街", icon: "🛍️", badge: "行程", details: { "備註": "可以去uru coffee" ,Map:"https://maps.app.goo.gl/FWPuv1PVM3Z8Wxxe7"} },
+                        { type: "sight", time: "下午", title: "新風館", icon: "🛍️", badge: "行程", details: { "交通": "地鐵",Map:"https://maps.app.goo.gl/DyYNhSmhZjXgCG8x5" } },
+                        { type: "food", time: "19:00", title: "麓壽庵", icon: "🦆", badge: "用膳", notice: "Chao Peiyu 訂位", details: { "訂位": "19:00",Map:"https://maps.app.goo.gl/BReZwJ9mcjFVygob7" } }
                     ]},
                     { id: 5, date: "06/07", title: "金澤一日遊", sub: "美術館 · 兼六園 · 近江町市場", items: [
                         { type: "transport", time: "早上", title: "京都 → 金澤", icon: "🚄", badge: "交通", details: { "交通": "四條→京都車站 (烏丸) → 敦賀(JR雷鳥9特急)→ 金澤 (北路新幹線)" ,Map:"https://maps.app.goo.gl/yDvnEAXByCf5Kp1L7"} },
-                        { type: "food", time: "中午", title: "金澤近江町市場", icon: "🍶", badge: "用膳", details: { "營業": "09:00–17:00" ,Map:"https://maps.app.goo.gl/NL93cXJnKNYA1xhi6"} },     
+                        { type: "food", time: "中午", title: "金澤近江町市場", icon: "🐟", badge: "用膳", details: { "營業": "09:00–17:00" ,Map:"https://maps.app.goo.gl/NL93cXJnKNYA1xhi6"} },     
                         { type: "sight", time: "中午", title: "金澤 21 世紀美術館", icon: "🎨", badge: "行程", details: { "營業": "10:00–18:00",Map:"https://maps.app.goo.gl/76hX11rtFnV6H7rG7" } },
                         { type: "sight", time: "下午", title: "兼六園", icon: "🌳", badge: "行程", details: {"門票": "320日幣" , "營業": "07:00–18:00" ,Map:"https://maps.app.goo.gl/Eb6GFoy25q7YvQyo8"} },
-                        { type: "food", time: "下午", title: "Le Musée de H 金澤百番街店", icon: "🍶", badge: "用膳", details: { "營業": "09:00–17:00",Map:"https://maps.app.goo.gl/Cu71NeuuvvbWDfncA" } },     
-                        { type: "food", time: "下午", title: "東屋茶街", icon: "🍶", badge: "行程", details: { "營業": "10:00–17:00","備註":"可以去一笑、久連波、甘味處 和味、東山莊",Map:"https://maps.app.goo.gl/ABBfhCrjswGuoWMa8" } },     
-                        { type: "food", time: "晚上", title: "大関", icon: "🍶", badge: "用膳", details: { "營業": "16:30-21:30",Map:"https://maps.app.goo.gl/RNk1MwDmUZgADqft8" } },     
+                        { type: "food", time: "下午", title: "Le Musée de H 金澤百番街店", icon: "🍰", badge: "用膳", details: { "營業": "09:00–17:00",Map:"https://maps.app.goo.gl/Cu71NeuuvvbWDfncA" } },     
+                        { type: "food", time: "下午", title: "東屋茶街", icon: "🛍️", badge: "行程", details: { "營業": "10:00–17:00","備註":"可以去一笑、久連波、甘味處 和味、東山莊",Map:"https://maps.app.goo.gl/ABBfhCrjswGuoWMa8" } },     
+                        { type: "food", time: "晚上", title: "大関", icon: "🍢", badge: "用膳", details: { "營業": "16:30-21:30",Map:"https://maps.app.goo.gl/RNk1MwDmUZgADqft8" } },     
                     ]},
                     { id: 6, date: "06/08", title: "前往大阪！", sub: "大阪城 · 哥哥壽喜燒", items: [
-                        { type: "food", time: "早上", title: "Ito Okashi", icon: "🍶", badge: "用膳",notice: "趙珮訂位", details: {"預約": "09:30","預約ID":"6EWKV3", "營業": "07:00-12:30" ,Map:"https://maps.app.goo.gl/NL93cXJnKNYA1xhi6"} },
+                        { type: "food", time: "早上", title: "Ito Okashi", icon: "🍚", badge: "用膳",notice: "趙珮訂位", details: {"預約": "09:30","預約ID":"6EWKV3", "營業": "07:00-12:30" ,Map:"https://maps.app.goo.gl/NL93cXJnKNYA1xhi6"} },
                         { type: "transport", time: "早上", title: "京都 → 大阪", icon: "🚄", badge: "交通", details: { "交通": "四條 → 京都車站(烏丸) → 大阪車站(東海道山陽本線）→ 本町(四橋)" ,Map:"https://maps.app.goo.gl/yDvnEAXByCf5Kp1L7"} },
                         { type: "sight", time: "早上", title: "萬博紀念公園", icon: "🌳", badge: "行程", details: { "分類": "地鐵", Map: "https://maps.app.goo.gl/76hX11rtFnV6H7rG7" } },
                         { type: "sight", time: "早上", title: "大阪城", icon: "🏯", badge: "行程", details: { "營業": "09:00–18:00" ,Map:"https://maps.app.goo.gl/tKccudHvFKdo2V1D7"} },
@@ -636,8 +641,8 @@
                     { id: 8, date: "06/10", title: "中之島 · 返台", sub: "中崎町 · 回家", items: [
                         { type: "sight", time: "早上", title: "中之島美術館", icon: "🎨", badge: "行程", details: { "營業": "10:00–17:00" } },
                         { type: "sight", time: "中午", title: "中崎町", icon: "🏘️", badge: "行程", details: { "交通": "地鐵" } },
-                        { type: "food", time: "下午", title: "neel nakazakicho", icon: "🍶", badge: "用膳", details: { "營業": "10:00–20:30",Map:"https://maps.app.goo.gl/LAmbjbcR3ivUuqM6A" } },
-                        { type: "transport", time: "18:20", title: "關西機場 → 桃園", icon: "✈️", badge: "交通", details: { "航班": "GK54", "訂票號碼": "HQWQPA", "出發": "18:20", "抵達": "22:00"  } }
+                        { type: "food", time: "下午", title: "neel nakazakicho", icon: "🥪", badge: "用膳", details: { "營業": "10:00–20:30",Map:"https://maps.app.goo.gl/LAmbjbcR3ivUuqM6A" } },
+                        { type: "transport", time: "18:20", title: "關西機場 → 桃園", icon: "✈️", badge: "交通", suggestedArrival: "15:00 (T1 櫃檯)", details: { "航班": "GK54", "訂票號碼": "HQWQPA", "出發": "18:20", "抵達": "22:00",Map:"https://maps.app.goo.gl/gtKCSckTCGaaVkit9"  } }
                     ]}
                 ],
 
@@ -654,6 +659,7 @@
                     
                     return this.placeInfo[item.title] || {};
                 },
+
                  resetFlags() {
                     this.modalImg = '';
                     this.fromCategory = null;
@@ -664,10 +670,14 @@
                     this.isHotel = false;
                     this.isEmergency = false;
                     this.isShopping = false;
+                    this.modalCategoryTitle ='';
+                    this.modalCategorySub = '';
                 },
 
                 openModal(item) {
                     this.resetFlags();
+                    this.modalCategoryTitle = item.badge || '資訊';
+                    this.modalCategorySub = 'Information';
                     if (item.type === 'hotel' && this.hotels[item.hotelKey]) {
                         this.openHotelModal(this.hotels[item.hotelKey]);
                         return;
@@ -687,6 +697,8 @@
                     this.resetFlags();
                     if (this.isListModalOpen) this.fromCategory = from;
                     this.selectedHotel = hotel;
+                    this.modalCategoryTitle = '住宿資訊';
+                    this.modalCategorySub = 'Accommodation';
                     this.isHotel = true;
                     this.selectedItem = { type: 'hotel', title: hotel.name, details: { Map: hotel.mapUrl } };
                     this.modalImg = hotel.img || '';
@@ -702,6 +714,8 @@
                     if (this.isListModalOpen) this.fromCategory = from;
                     this.selectedEmergency = contact;
                     this.isEmergency = true;
+                    this.modalCategoryTitle = '緊急連絡';
+                    this.modalCategorySub = 'Emergency';
                     this.modalEmoji = contact.ico || '📞';
                     this.modalDesc = "緊急連絡資訊";
                     this.isModalOpen = true;
@@ -716,6 +730,8 @@
                     this.isShopping = true;
                     this.modalEmoji = item.icon || '🛍️';
                     this.modalDesc = item.desc || "購物清單項目";
+                    this.modalCategoryTitle = '購物清單';
+                    this.modalCategorySub = 'Shopping List';
                     this.isModalOpen = true;
                     this.$nextTick(() => lucide.createIcons());
                 },
