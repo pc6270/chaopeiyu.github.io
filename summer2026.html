@@ -512,17 +512,17 @@
                 ],
                 hotels: {
                     omo: {
-                        name: "OMO 關西機場飯店", emoji: "✈️", dates: "06/03 → 06/04", platform:"JAPANiCAN", address: "大阪府泉佐野市りんくう往來北1-83", phone: "+81 72-458-1122", bookingID: "6190018084", checkin: "15:00", checkout: "11:00",
+                        name: "OMO 關西機場飯店", emoji: "🏨", dates: "06/03 → 06/04", platform:"JAPANiCAN", address: "大阪府泉佐野市りんくう往來北1-83", phone: "+81 72-458-1122", bookingID: "6190018084", checkin: "15:00", checkout: "11:00",
                         desc: "星野集團旗下 OMO 品牌，質感極高且位置緊鄰機場。飯店二樓直通臨空城車站，是抵達日本首晚的完美選擇。", amenities: ["24h 前台代收", "大浴場與桑拿", "行李寄存室", "機場接駁巴士", "加濕空氣清淨機"],
                         img: "https://daydayplay.hk/wp-content/uploads/2022/09/osaka_omo_kix-2.jpg", mapUrl: "https://maps.app.goo.gl/wrrEJFjyjPYWus9b7"
                     },
                     koko: {
-                        name: "KOKO Hotel 京都", emoji: "🏯", dates: "06/04 → 06/08", address: "京都市下京區烏丸通四條下る", phone: "+81 75-279-0202", bookingID: "KH-KYT-9808", checkin: "15:00", checkout: "11:00",
+                        name: "KOKO Hotel 京都", emoji: "🏨", dates: "06/04 → 06/08", address: "京都市下京區烏丸通四條下る", phone: "+81 75-279-0202", bookingID: "KH-KYT-9808", checkin: "15:00", checkout: "11:00",
                         desc: "位於京都車站與四條烏丸交界，散發著和風現代感。周邊有百貨公司與便利商店，生活機能無懈可擊。", amenities: ["自助行李寄存", "全室加濕清淨機", "2F 咖啡休憩區", "多款枕頭租借"],
                         img: "https://pix10.agoda.net/hotelImages/10565359/0/6854527543c769e49b62a799cab25564.jpg?ce=3&s=414x232", mapUrl: "https://maps.app.goo.gl/h1tmhoW2vf9zXh679"
                     },
                     basement: {
-                        name: "The Basement 大阪", emoji: "🌃", dates: "06/08 → 06/10", platform:"Agoda",address: "大阪市中央區本町",phone: "+81 6-6210-2720", bookingID: "1712109359", checkin: "15:00", checkout: "11:00",
+                        name: "The Basement 大阪", emoji: "🏨", dates: "06/08 → 06/10", platform:"Agoda",address: "大阪市中央區本町",phone: "+81 6-6210-2720", bookingID: "1712109359", checkin: "15:00", checkout: "11:00",
                         desc: "王子飯店集團旗下的設計概念飯店，結合智慧科技與簡約美學。入住即享免費輕食早餐。", amenities: ["自動報到系統", "免費輕食組合", "自助儲物空間", "24h 洗衣房"],
                         img: "https://thebasementhotel.jp/osakahonmachi/assets/images/about/img_intro03.webp", mapUrl: "https://maps.app.goo.gl/EJDDURu4dcGsbMEr5"
                     }
@@ -699,6 +699,7 @@
                     this.selectedHotel = hotel;
                     this.modalCategoryTitle = '住宿資訊';
                     this.modalCategorySub = 'Accommodation';
+                    this.modalEmoji = hotel.emoji || '';
                     this.isHotel = true;
                     this.selectedItem = { type: 'hotel', title: hotel.name, details: { Map: hotel.mapUrl } };
                     this.modalImg = hotel.img || '';
