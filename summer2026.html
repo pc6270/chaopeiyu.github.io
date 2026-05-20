@@ -81,6 +81,14 @@
         <div class="logo font-serif font-extrabold text-base flex items-center gap-2 sm:text-lg">
             ✦ <span class="text-moss">魔法師</span>之旅
         </div>
+         <div class="flex items-center gap-1.5 sm:gap-2" @click.stop>
+            <button @click="openSubwayModal('osaka')" class="px-2.5 py-1 text-[0.65rem] font-black text-moss bg-moss/10 hover:bg-moss/20 border border-moss/5 rounded-full transition-all flex items-center gap-1 shadow-sm cursor-pointer">
+                🚇 大阪地鐵
+            </button>
+            <button @click="openSubwayModal('kyoto')" class="px-2.5 py-1 text-[0.65rem] font-black text-moss bg-moss/10 hover:bg-moss/20 border border-moss/5 rounded-full transition-all flex items-center gap-1 shadow-sm cursor-pointer">
+                🚇 京都地鐵
+            </button>
+        </div>
         <div class="text-[0.6rem] font-bold text-moss/60 uppercase tracking-widest hidden sm:block">
             06.03 - 06.10
         </div>
@@ -93,7 +101,7 @@
                 Tour Guide 2026
             </div>
             <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-3 text-moss font-serif leading-tight">
-                大阪京都<br />魔法師之旅 🧙‍♂️
+                大阪京都<br />魔法師之旅 💫
             </h1>
             <p class="text-moss/80 text-sm sm:text-base font-medium">
                 8天7夜 · 大阪 · 京都 · 金澤
@@ -471,6 +479,81 @@
         </div>
     </div>
 
+    <!-- Subway Map Modal -->
+    <div x-show="isSubwayModalOpen" 
+         class="fixed inset-0 z-[1010] flex items-center justify-center p-4 bg-moss/80 backdrop-blur-xl"
+         @click="closeSubwayModal()"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         x-cloak>
+        
+        <div x-show="isSubwayModalOpen"
+             class="relative w-full max-w-2xl bg-rice-paper rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+             @click.stop
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="scale-95 translate-y-4"
+             x-transition:enter-end="scale-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="scale-100 translate-y-0"
+             x-transition:leave-end="scale-95 translate-y-4">
+            
+            <!-- Header Actions -->
+            <div class="absolute top-6 left-6 right-6 z-10 flex items-center justify-between pointer-events-none">
+                <div></div>
+                <button @click="closeSubwayModal()" class="pointer-events-auto w-10 h-10 bg-rice-paper/80 hover:bg-white backdrop-blur-md rounded-full flex items-center justify-center text-moss transition-all shadow-sm active:scale-95">
+                    <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                </button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="overflow-y-auto no-scrollbar flex-grow p-6 sm:p-8 pt-16">
+                <div class="text-[0.6rem] font-black text-terracotta mb-2 tracking-[0.2em] uppercase flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                    <div>
+                        <span class="text-moss/60">Metro Map</span>
+                        <span class="mx-1 opacity-30">•</span>
+                        <span>地下鐵路線圖</span>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-extrabold mb-1 text-moss font-serif leading-tight" x-text="subwayMaps[activeSubwayKey]?.title"></h2>
+                <p class="text-[0.65rem] font-bold text-moss/50 uppercase tracking-[0.15em] mb-4" x-text="subwayMaps[activeSubwayKey]?.sub"></p>
+
+                <!-- Map Container -->
+                <div class="relative bg-stone-100 rounded-3xl border border-moss/10 overflow-hidden group mb-6 flex flex-col">
+                    <div class="p-2 text-center text-[0.65rem] font-bold text-moss/60 bg-sand/30 border-b border-moss/5">
+                        💡 滑動可拖曳檢視路線
+                    </div>
+                    <div class="w-full h-[45vh] overflow-auto no-scrollbar scroll-smooth cursor-grab active:cursor-grabbing flex items-start justify-center p-2 bg-white">
+                        <img :src="subwayMaps[activeSubwayKey]?.imgUrl" 
+                             class="max-w-[300%] max-h-[300%] object-contain rounded-2xl bg-white select-none shadow-sm min-w-full" 
+                             :alt="subwayMaps[activeSubwayKey]?.title">
+                    </div>
+                </div>
+
+                <p class="text-xs text-moss/80 leading-relaxed mb-6 font-medium bg-sand/20 p-4 rounded-2xl border border-moss/5" x-text="subwayMaps[activeSubwayKey]?.desc"></p>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a :href="subwayMaps[activeSubwayKey]?.pdfUrl"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="flex-1 bg-moss hover:bg-moss/90 text-white font-black text-[0.7rem] tracking-widest uppercase py-3.5 rounded-full flex items-center justify-center gap-2 shadow-md shadow-moss/20 transition-all active:scale-[0.98]">
+                        <i data-lucide="map" style="width: 14px; height: 14px;"></i>
+                        開啟官方原始大圖
+                    </a>
+                    <button @click="closeSubwayModal()"
+                            class="sm:w-32 bg-sand hover:bg-sand/80 text-moss font-black text-[0.7rem] tracking-widest uppercase py-3.5 rounded-full transition-all active:scale-[0.98]">
+                        關閉 Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         function appData() {
             return {
@@ -496,6 +579,26 @@
                 modalDesc: '',
                 modalCategoryTitle: '',
                 modalCategorySub: '',
+
+                isSubwayModalOpen: false,
+                activeSubwayKey: null,
+                subwayMaps: {
+                    osaka: {
+                        title: "大阪地下鐵路線圖",
+                        sub: "Osaka Metro Route Map",
+                        imgUrl: "https://subway.osakametro.co.jp/img/osakametro_rosenzu_20250404.gif",
+                        pdfUrl: "https://subway.osakametro.co.jp/img/osakametro_rosenzu_20250404.gif",
+                        desc: "大阪市高速電氣軌道（Osaka Metro）包含御堂筋線、谷町線、四橋線、中央線、千日前線、堺筋線、長堀鶴見綠地線、今里筋線及南港港城線。"
+                    },
+                    kyoto: {
+                        title: "京都市營地下鐵路線圖",
+                        sub: "Kyoto Subway Route Map",
+                        imgUrl: "https://ht-cdn.panyou.com/uploadhk/2025/ht/0904/202509041450-6675402466.jpg",
+                        pdfUrl: "https://ht-cdn.panyou.com/uploadhk/2025/ht/0904/202509041450-6675402466.jpg",
+                        desc: "京都市交通局營運的地下鐵系統，包含南北向的「烏丸線」與東西向的「東西線」，並可與阪急電鐵、京阪電鐵及近鐵電車相互轉乘。"
+                    }
+                },
+
                  shoppingItems: [
                     { title: "Archi Coffee",icon: "☕", badge: "吃吃喝喝", details: { "購物戰士": "趙珮", "營業時間": "8:00-22:00" }, desc: "精選烘焙咖啡店。", mapUrl:"https://maps.app.goo.gl/aFeHsN7FJ3YMKBdU6"},
                     { title: "ツバメヤ黄金蕨餅", icon: "🍮", badge: "伴手禮", details: { "購物戰士": "趙珮" }, desc: "金黃色的蕨餅，口感Ｑ彈細緻。" },
@@ -758,6 +861,17 @@
                     }
                     this.isListModalOpen = true;
                     this.$nextTick(() => lucide.createIcons());
+                },
+
+                openSubwayModal(key) {
+                    this.activeSubwayKey = key;
+                    this.isSubwayModalOpen = true;
+                    this.$nextTick(() => lucide.createIcons());
+                },
+
+                closeSubwayModal() {
+                    this.isSubwayModalOpen = false;
+                    this.activeSubwayKey = null;
                 },
 
                 backToList() {
