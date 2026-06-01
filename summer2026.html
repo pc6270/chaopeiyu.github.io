@@ -88,6 +88,9 @@
             <button @click="openSubwayModal('kyoto')" class="px-2.5 py-1 text-[0.65rem] font-black text-moss bg-moss/10 hover:bg-moss/20 border border-moss/5 rounded-full transition-all flex items-center gap-1 shadow-sm cursor-pointer">
                 🚇 京都地鐵
             </button>
+            <button @click="openCurrencyModal()" class="px-2.5 py-1 text-[0.65rem] font-black text-moss bg-moss/10 hover:bg-moss/20 border border-moss/5 rounded-full transition-all flex items-center gap-1 shadow-sm cursor-pointer">
+                💴 匯率對照
+            </button>
         </div>
         <div class="text-[0.6rem] font-bold text-moss/60 uppercase tracking-widest hidden sm:block">
             06.03 - 06.10
@@ -554,6 +557,158 @@
         </div>
     </div>
 
+    <!-- Currency Exchange Modal -->
+    <div x-show="isCurrencyModalOpen" 
+         class="fixed inset-0 z-[1010] flex items-center justify-center p-4 bg-moss/80 backdrop-blur-xl"
+         @click="closeCurrencyModal()"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         x-cloak>
+        
+        <div x-show="isCurrencyModalOpen"
+             class="relative w-full max-w-2xl bg-rice-paper rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+             @click.stop
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="scale-95 translate-y-4"
+             x-transition:enter-end="scale-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="scale-100 translate-y-0"
+             x-transition:leave-end="scale-95 translate-y-4">
+            
+            <!-- Header Actions -->
+            <div class="absolute top-6 left-6 right-6 z-10 flex items-center justify-between pointer-events-none">
+                <div></div>
+                <button @click="closeCurrencyModal()" class="pointer-events-auto w-10 h-10 bg-rice-paper/80 hover:bg-white backdrop-blur-md rounded-full flex items-center justify-center text-moss transition-all shadow-sm active:scale-95">
+                    <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                </button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="overflow-y-auto no-scrollbar flex-grow p-6 sm:p-8 pt-16">
+                <div class="text-[0.6rem] font-black text-terracotta mb-2 tracking-[0.2em] uppercase flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    <div>
+                        <span class="text-moss/60">Currency Guide</span>
+                        <span class="mx-1 opacity-30">•</span>
+                        <span>日幣台幣對照表</span>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-extrabold mb-1 text-moss font-serif leading-tight">日圓台幣對照 (TWD ⇄ JPY)</h2>
+
+                <!-- Quick Calculator inside Modal -->
+                <div class="bg-sand/30 border border-moss/10 rounded-3xl p-5 mb-6">
+                    <h3 class="text-xs font-extrabold text-moss mb-3 flex items-center gap-1.5">
+                        <span>🧮</span> 快速即時換算 (1 JPY = 0.20 TWD)
+                    </h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[0.6rem] font-bold text-moss/60 mb-1">日圓 JPY (¥)</label>
+                            <div class="relative">
+                                <input
+                                    type="number"
+                                    x-model="jpyInputValue"
+                                    @input="convertFromJpy()"
+                                    class="w-full bg-white border border-moss/20 focus:border-moss/40 focus:outline-none rounded-xl px-3 py-2 text-sm font-black text-moss font-mono"
+                                />
+                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[0.65rem] font-bold text-moss/40">¥</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[0.6rem] font-bold text-moss/60 mb-1">台幣 TWD (NT$)</label>
+                            <div class="relative">
+                                <input
+                                    type="number"
+                                    x-model="twdInputValue"
+                                    @input="convertFromTwd()"
+                                    class="w-full bg-white border border-moss/20 focus:border-moss/40 focus:outline-none rounded-xl px-3 py-2 text-sm font-black text-moss font-mono"
+                                />
+                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[0.65rem] font-bold text-moss/40">$</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Container -->
+                <div class="relative bg-stone-100 rounded-3xl border border-moss/10 overflow-hidden group mb-6 flex flex-col">
+                    <div class="p-2 text-center text-[0.65rem] font-bold text-moss/60 bg-sand/35 border-b border-moss/5">
+                        📊 換算對照表圖卡
+                    </div>
+                    <div class="w-full h-[35vh] overflow-auto no-scrollbar scroll-smooth cursor-grab active:cursor-grabbing flex items-start justify-center p-2 bg-white">
+                        <img src="./images/currency.jpg" 
+                             class="max-w-[150%] object-contain rounded-2xl bg-white select-none shadow-sm min-w-full" 
+                             alt="Currency Cheatsheet Chart">
+                    </div>
+                </div>
+
+                <!-- HTML Quick Sheet
+                <div class="mb-6">
+                    <h3 class="text-xs font-extrabold text-moss mb-3">📍 實用小額對照表</h3>
+                    <div class="grid grid-cols-2 gap-x-6 gap-y-1.5 p-4 rounded-2xl bg-sand/10 border border-moss/5 text-xs text-moss font-mono">
+                        <div class="flex justify-between border-b border-moss/5 pb-1">
+                            <span class="text-moss/60">¥100</span>
+                            <span class="text-moss/30">→</span>
+                            <span class="font-bold text-terracotta">NT$21</span>
+                        </div>
+                        <div class="flex justify-between border-b border-moss/5 pb-1">
+                            <span class="text-moss/60">¥500</span>
+                            <span class="text-moss/30">→</span>
+                            <span class="font-bold text-terracotta">NT$105</span>
+                        </div>
+                        <div class="flex justify-between border-b border-moss/5 pb-1">
+                            <span class="text-moss/60">¥1,000</span>
+                            <span class="text-moss/30">→</span>
+                            <span class="font-bold text-terracotta">NT$210</span>
+                        </div>
+                        <div class="flex justify-between border-b border-moss/5 pb-1">
+                            <span class="text-moss/60">¥3,000</span>
+                            <span class="text-moss/30">→</span>
+                            <span class="font-bold text-terracotta">NT$630</span>
+                        </div>
+                        <div class="flex justify-between border-b border-moss/5 pb-1">
+                            <span class="text-moss/60">¥5,000</span>
+                            <span class="text-moss/30">→</span>
+                            <span class="font-bold text-terracotta">NT$1,050</span>
+                        </div>
+                        <div class="flex justify-between border-b border-moss/5 pb-1">
+                            <span class="text-moss/60">¥10,000</span>
+                            <span class="text-moss/30">→</span>
+                            <span class="font-bold text-terracotta">NT$2,100</span>
+                        </div>
+                        <div class="flex justify-between border-b border-moss/5 pb-1">
+                            <span class="text-moss/60">¥30,000</span>
+                            <span class="text-moss/30">→</span>
+                            <span class="font-bold text-terracotta">NT$6,300</span>
+                        </div>
+                        <div class="flex justify-between border-b border-moss/5 pb-1">
+                            <span class="text-moss/60">¥50,000</span>
+                            <span class="text-moss/30">→</span>
+                            <span class="font-bold text-terracotta">NT$10,500</span>
+                        </div>
+                    </div>
+                </div> -->
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a href="./images/currency.jpg"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="flex-1 bg-moss hover:bg-moss/90 text-white font-black text-[0.7rem] tracking-widest uppercase py-3.5 rounded-full flex items-center justify-center gap-2 shadow-md shadow-moss/20 transition-all active:scale-[0.98]">
+                        <i data-lucide="file-text" style="width: 14px; height: 14px;"></i>
+                        儲存/開大圖 Save Image
+                    </a>
+                    <button @click="closeCurrencyModal()"
+                            class="sm:w-32 bg-sand hover:bg-sand/80 text-moss font-black text-[0.7rem] tracking-widest uppercase py-3.5 rounded-full transition-all active:scale-[0.98]">
+                        關閉 Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         function appData() {
             return {
@@ -582,6 +737,11 @@
 
                 isSubwayModalOpen: false,
                 activeSubwayKey: null,
+                isCurrencyModalOpen: false,
+                jpyInputValue: '1000',
+                twdInputValue: '200',
+                currencyRate: 0.20,
+
                 subwayMaps: {
                     osaka: {
                         title: "大阪地下鐵路線圖",
@@ -596,7 +756,9 @@
                         imgUrl: "https://ht-cdn.panyou.com/uploadhk/2025/ht/0904/202509041450-6675402466.jpg",
                         pdfUrl: "https://ht-cdn.panyou.com/uploadhk/2025/ht/0904/202509041450-6675402466.jpg",
                         desc: "京都市交通局營運的地下鐵系統，包含南北向的「烏丸線」與東西向的「東西線」，並可與阪急電鐵、京阪電鐵及近鐵電車相互轉乘。"
-                    }
+                    },
+                    
+
                 },
 
                  shoppingItems: [
@@ -682,18 +844,18 @@
                 },
 
                 days: [
-                    { id: 1, date: "06/03", title: "出發日 ✈️", sub: "晚上起飛", items: [
+                    { id: 1, date: "06/03 (三)", title: "出發日 ✈️", sub: "晚上起飛", items: [
                         { type: "transport", time: "18:20", title: "桃園 → 關西機場", icon: "✈️", badge: "交通", notice: "提前2小時到機場", suggestedArrival: "16:00 (T1 櫃檯)", details: { "航班": "GK54", "訂票號碼": "HQWQPA", "出發": "18:20", "抵達": "22:00" ,Map: "https://maps.app.goo.gl/BFEYj1kDUcV94ExZ9"} },
                         { type: "hotel", time: "深夜", title: "OMO 關西機場飯店", icon: "🏨", badge: "住宿", hotelKey: "omo", details: { "住宿": "06/03-04" } }
                     ]},
-                    { id: 2, date: "06/04", title: "天橋立 & 入京都", sub: "KKDay 一日遊 · 初抵京都", items: [
+                    { id: 2, date: "06/04 (四)", title: "天橋立 & 入京都", sub: "KKDay 一日遊 · 初抵京都", items: [
                         { type: "sight", time: "全日", title: "天橋立一日遊", icon: "🌉", badge: "行程", notice: "KKDay 預訂", voucherUrl: "./file/26KK239440156_kkday_voucher.pdf", bookingId: "26KK239440156", details: { "訂單": "26KK239440156", "集合時間": "8:25~8:40" ,"集合地點": "大阪近鐵日本橋2號出口"} },
                         { type: "hotel", time: "入住", title: "KOKO Hotel 京都", icon: "🏨", badge: "住宿", hotelKey: "koko", details: { "住宿": "06/04-08", "電話": "+81 75-279-0202" } },
                         { type: "other", time: "晚上", title: "東洋亭", icon: "🍔", badge: "用膳", details: { "地點": "京都伊勢丹店","營業": "10:00–20:00",Map:"https://maps.app.goo.gl/fCk3Skovo5idut4t9" } },
                         { type: "other", time: "晚上", title: "日本栗專賣店 Saori", icon: "🌰", badge: "用膳", details: { "營業": "11:00–22:00",Map:"https://maps.app.goo.gl/W6LcW6rUW8udrztp7" } },
                         { type: "other", time: "晚上", title: "SAMGHA", icon: "☯️", badge: "用膳", details: { "地點": "四條 烏丸","營業": "17:00–00:00",Map:"https://maps.app.goo.gl/9SYfWsbsJKWb9Y5k7" } }
                     ]},
-                    { id: 3, date: "06/05", title: "貴船 · TeamLab 夜", sub: "貴船神社 · 川床午餐 · TeamLab", items: [
+                    { id: 3, date: "06/05 (五)", title: "貴船 · TeamLab 夜", sub: "貴船神社 · 川床午餐 · TeamLab", items: [
                         { type: "sight", time: "早上", title: "貴船神社", icon: "⛩️", badge: "行程", details: { "交通": "地鐵" } },
                         { type: "food", time: "中午", title: "貴船茶屋（川床）", icon: "🍱", badge: "用膳", details: { "特色": "川床料理","營業":"10:30–16:00",Map:"https://maps.app.goo.gl/KUsgaqPzZZ8fV2Sb6" } },
                         { type: "food", time: "中午", title: "押鳥", icon: "🍱", badge: "用膳", details: { "特色": "川床料理","營業":"11:00–20:00",Map:"https://maps.app.goo.gl/9HLuZBbFFAyooX716" }},
@@ -702,7 +864,7 @@
                         { type: "special", time: "18:00", title: "TeamLab Biovortex", icon: "🌸", badge: "行程", notice: "入場前一天才有 QR code", voucherUrl: "#", details: { "時段": "18:00–18:30" } },
                         { type: "food", time: "晚上", title: "BEE’S KNEES", icon: "🍶", badge: "用膳", details: { "訂位": "19:00" } }
                     ]},
-                    { id: 4, date: "06/06", title: "京都趴趴走", sub: "神社 · 祇園 · 逛街", items: [
+                    { id: 4, date: "06/06 (六)", title: "京都趴趴走", sub: "神社 · 祇園 · 逛街", items: [
                         { type: "food", time: "早上", title: "Dunstan Coffee Roaster", icon: "☕", badge: "用膳", details: { "備註": "很近可能可以喝一杯" ,"營業":"9:30-11:30",Map:"https://maps.app.goo.gl/mqYWwMcZDWJnd3Ft7"} },
                         { type: "food", time: "08:00", title: "Kacto", icon: "🍳", badge: "用膳", details: { "訂位": "08:00",Map:"https://maps.app.goo.gl/K6WqSvmoSesKkBBH7" } },
                         { type: "sight", time: "早上", title: "金閣寺", icon: "⛩️", badge: "行程", details: { "門票": "500日幣" ,"營業": "09:00–17:00",Map:"https://maps.app.goo.gl/KhBiLWMFvZKAbkoq6"} },
@@ -715,7 +877,7 @@
                         { type: "sight", time: "下午", title: "新風館", icon: "🛍️", badge: "行程", details: { "交通": "地鐵",Map:"https://maps.app.goo.gl/DyYNhSmhZjXgCG8x5" } },
                         { type: "food", time: "19:00", title: "麓壽庵", icon: "🦆", badge: "用膳", notice: "Chao Peiyu 訂位", details: { "訂位": "19:00",Map:"https://maps.app.goo.gl/BReZwJ9mcjFVygob7" } }
                     ]},
-                    { id: 5, date: "06/07", title: "金澤一日遊", sub: "美術館 · 兼六園 · 近江町市場", items: [
+                    { id: 5, date: "06/07 (日)", title: "金澤一日遊", sub: "美術館 · 兼六園 · 近江町市場", items: [
                         { type: "transport", time: "早上", title: "京都 → 金澤", icon: "🚄", badge: "交通", details: { "交通": "四條→京都車站 (烏丸) → 敦賀(JR雷鳥9特急)→ 金澤 (北路新幹線)" ,Map:"https://maps.app.goo.gl/yDvnEAXByCf5Kp1L7"} },
                         { type: "food", time: "中午", title: "金澤近江町市場", icon: "🐟", badge: "用膳", details: { "營業": "09:00–17:00" ,Map:"https://maps.app.goo.gl/NL93cXJnKNYA1xhi6"} },     
                         { type: "sight", time: "中午", title: "金澤 21 世紀美術館", icon: "🎨", badge: "行程", details: { "營業": "10:00–18:00",Map:"https://maps.app.goo.gl/76hX11rtFnV6H7rG7" } },
@@ -724,7 +886,7 @@
                         { type: "food", time: "下午", title: "東屋茶街", icon: "🛍️", badge: "行程", details: { "營業": "10:00–17:00","備註":"可以去一笑、久連波、甘味處 和味、東山莊",Map:"https://maps.app.goo.gl/ABBfhCrjswGuoWMa8" } },     
                         { type: "food", time: "晚上", title: "大関", icon: "🍢", badge: "用膳", details: { "營業": "16:30-21:30",Map:"https://maps.app.goo.gl/RNk1MwDmUZgADqft8" } },     
                     ]},
-                    { id: 6, date: "06/08", title: "前往大阪！", sub: "大阪城 · 哥哥壽喜燒", items: [
+                    { id: 6, date: "06/08 (一)", title: "前往大阪！", sub: "大阪城 · 哥哥壽喜燒", items: [
                         { type: "food", time: "早上", title: "Ito Okashi", icon: "🍚", badge: "用膳",notice: "趙珮訂位", details: {"預約": "09:30","預約ID":"6EWKV3", "營業": "07:00-12:30" ,Map:"https://maps.app.goo.gl/NL93cXJnKNYA1xhi6"} },
                         { type: "transport", time: "早上", title: "京都 → 大阪", icon: "🚄", badge: "交通", details: { "交通": "四條 → 京都車站(烏丸) → 大阪車站(東海道山陽本線）→ 本町(四橋)" ,Map:"https://maps.app.goo.gl/yDvnEAXByCf5Kp1L7"} },
                         { type: "sight", time: "早上", title: "萬博紀念公園", icon: "🌳", badge: "行程", details: { "分類": "地鐵", Map: "https://maps.app.goo.gl/76hX11rtFnV6H7rG7" } },
@@ -738,10 +900,10 @@
                         { type: "shopping", time: "下午/晚上", title: "CENE OSAKA | ルクア大阪店", icon: "💍", badge: "行程", details: { "地點": "LUCUA Osaka 8F", "備註": "不鏽鋼飾品", Map: "https://maps.app.goo.gl/BHA3dMtS1JLTecNJ8" } },
                         { type: "food", time: "19:30", title: "SUKIYAKI FUJIMOTO", icon: "🥩", badge: "用膳",notice: "表妹訂位", details: { "訂位": "19:30","預約ID":"AAAA-89EA-5D38-253B",Map:"https://maps.app.goo.gl/DL62UhXx25LuTix87?g_st=ipc" } }
                     ]},
-                    { id: 7, date: "06/09", title: "環球影城！🎢", sub: "USJ 全日攻略", items: [
+                    { id: 7, date: "06/09 (二)", title: "環球影城！🎢", sub: "USJ 全日攻略", items: [
                         { type: "special", time: "全日", title: "環球影城 USJ", icon: "🎢", badge: "行程", notice: "KKDay 預訂", voucherUrl: "https://drive.google.com/drive/mobile/folders/1ZfuUofioVVtJ_0QSTXHwFAQWpaTbWi6O?usp=sharing",details: {Map:"https://maps.app.goo.gl/HU96VvouPGzsw6V68"}}
                     ]},
-                    { id: 8, date: "06/10", title: "中之島 · 返台", sub: "中崎町 · 回家", items: [
+                    { id: 8, date: "06/10 (三)", title: "中之島 · 返台", sub: "中崎町 · 回家", items: [
                         { type: "sight", time: "早上", title: "中之島美術館", icon: "🎨", badge: "行程", details: { "營業": "10:00–17:00" } },
                         { type: "sight", time: "中午", title: "中崎町", icon: "🏘️", badge: "行程", details: { "交通": "地鐵" } },
                         { type: "food", time: "下午", title: "neel nakazakicho", icon: "🥪", badge: "用膳", details: { "營業": "10:00–20:30",Map:"https://maps.app.goo.gl/LAmbjbcR3ivUuqM6A" } },
@@ -884,6 +1046,32 @@
                     this.isModalOpen = false;
                     this.selectedItem = null;
                     this.selectedHotel = null;
+                },
+                openCurrencyModal() {
+                    this.isCurrencyModalOpen = true;
+                    this.$nextTick(() => lucide.createIcons());
+                },
+
+                closeCurrencyModal() {
+                    this.isCurrencyModalOpen = false;
+                },
+
+                convertFromJpy() {
+                    const num = parseFloat(this.jpyInputValue);
+                    if (!isNaN(num)) {
+                        this.twdInputValue = (num * this.currencyRate).toFixed(1);
+                    } else {
+                        this.twdInputValue = '';
+                    }
+                },
+
+                convertFromTwd() {
+                    const num = parseFloat(this.twdInputValue);
+                    if (!isNaN(num)) {
+                        this.jpyInputValue = (num / this.currencyRate).toFixed(0);
+                    } else {
+                        this.jpyInputValue = '';
+                    }
                 }
             }
         }
